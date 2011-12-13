@@ -1,0 +1,7 @@
+body {
+    background: #000;
+}
+
+#game_canvas {
+    border: 1px solid #fff;
+}
