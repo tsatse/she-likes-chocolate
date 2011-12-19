@@ -3,7 +3,7 @@
             function preload(name) {
                 images[name] = new Image();
                 images[name].onload = function(event) {
-                        left_to_preload--;
+                        left_to_preload = Math.max(0, left_to_preload-1);
                     };
                 images[name].src = name + '.png';
             }
@@ -25,7 +25,7 @@
             }
             function draw_character(character_name) {
                 var character = characters[character_name];
-                var image = images[character.sprite];
+                var image = images[character.sprites[character.action]];
                 var current_map_offset = get_map_offset(characters['me'].x, characters['me'].y);
                 ctx.drawImage(image,
                     0, 0, image.width, image.height,
@@ -35,19 +35,28 @@
             function get_map_offset(x, y) {
                 var result = {x:0,y:0}
                 if(x > (game_canvas.width/2)) {
-                    result.x = x - game_canvas.width/2;
+                    result.x = Math.min(x - game_canvas.width/2, map_width - game_canvas.width);
                 }
                 /*
                 if(y < (game_canvas.height/2)) {
-                    result.y = y - game_canvas.width/2;
-                }*/
+                    result.y = y - game_canvas.height/2;
+                }
+                */
                 
                 return result;
             }
             function draw_map(x, y) {
                 var map_offset = get_map_offset(x, y);
+                ctx.drawImage(images['sky'], 0, 0, game_canvas.width, game_canvas.height, 0, 0, game_canvas.width, game_canvas.height);
                 ctx.drawImage(images['houses'],
-                    map_offset.x, map_offset.y, game_canvas.width, game_canvas.height,
+                    Math.min(map_offset.x, map_width-game_canvas.width), map_offset.y, game_canvas.width, game_canvas.height,
+                    0, 0, game_canvas.width, game_canvas.height);
+                
+            }
+            function draw_foreground(x, y) {
+                var map_offset = get_map_offset(x, y);
+                ctx.drawImage(images['foreground'],
+                    (map_offset.x*1.5)%(map_width-game_canvas.width), map_offset.y, game_canvas.width, game_canvas.height,
                     0, 0, game_canvas.width, game_canvas.height);
             }
             function is_visible(character_name) {
@@ -70,10 +79,24 @@
                             draw_character(character_list[i]);
                         }
                     }
+                    draw_foreground(characters['me'].x, characters['me'].y);
+                }
+                else {
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, game_canvas.width, game_canvas.height);
+                    
+                    ctx.fillStyle = '#ddd';
+                    var completion = (total_to_preload - left_to_preload) / total_to_preload;
+                    ctx.fillRect(game_canvas.width*.3, game_canvas.height*.5-10, completion * game_canvas.width*.3, 20);
+                    ctx.strokeStyle = '#fff';
+                    ctx.strokeRect(game_canvas.width*.3, game_canvas.height*.5-10, game_canvas.width*.3, 20);
+                    
+                    
                 }
             }
             document.addEventListener('keydown', function(event) {
                     var unit = 2;
+                    characters['me'].action = 'idle';
                     if(event.keyCode == 37) {
                         characters['me'].dx = -unit;
                     }
@@ -85,6 +108,13 @@
                     }
                     if(event.keyCode == 40) {
                         characters['me'].dy = unit;
+                    }
+                    
+                    if(characters['me'].dx > 0) {
+                        characters['me'].action = 'walk_right';
+                    }
+                    if(characters['me'].dx < 0) {
+                        characters['me'].action = 'walk_left';
                     }
                 }, false);
             document.addEventListener('keyup', function(event) {
@@ -103,37 +133,54 @@
                 }, false);
 
             var game_canvas = document.getElementById('game_canvas');
-            var min_x = 115;
+            var min_x = 200;
             var max_x = 2350;
             var min_y = 150;
             var max_y = 280;
             var ctx = game_canvas.getContext('2d');
             var images = {};
-            var left_to_preload = 3;
+            var total_to_preload = 7;
+            var left_to_preload = total_to_preload;
             var characters = {
                 'her': {
-                    'sprite': 'her_sprite',
-                    'action': null,
+                    'sprites': {
+                        'idle': 'her_sprite',
+                        'walk_left': 'her_sprite',
+                        'walk_right': 'her_sprite',
+                    },
+                    'action': 'idle',
                     'phase': 0,
-                    'x':50,
-                    'y':275,
+                    'x':125,
+                    'y':155,
                     'dx': 0,
                     'dy': 0
                 },
                 'me': {
-                    'sprite': 'me_sprite',
-                    'action': null,
+                    'sprites': {
+                        'idle': 'me_sprite_idle',
+                        'walk_left': 'me_sprite',
+                        'walk_right': 'me_sprite_right',
+                        'walk_up': 'me_sprite_idle',
+                        'walk_down': 'me_sprite_idle'
+                    },
+                    'action': 'idle',
                     'phase': 0,
-                    'x':120,
-                    'y':255,
+                    'x':202,
+                    'y':185,
                     'dx': 0,
                     'dy': 0
                 }
             };
             
+            preload('sky');
+            preload('foreground');
             preload('houses');
             preload('her_sprite');
             preload('me_sprite');
+            preload('me_sprite_right');
+            preload('me_sprite_idle');
+            
+            var map_width = images['houses'].width;
             game_canvas.width = 800;
             game_canvas.height = 450;
             Framer.reset();
