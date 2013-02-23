@@ -1,12 +1,30 @@
 ﻿require(['utils', 'framer'], function (Utils, Framer) {
-        window.onload = function() {
-            function preload(name) {
-                images[name] = new Image();
-                images[name].onload = function(event) {
-                        left_to_preload = Math.max(0, left_to_preload-1);
-                    };
-                images[name].src = name + '.png';
+        function loadImages(imagesURLs, allDone) {
+            var imagesNames = Object.keys(imagesURLs);
+            var result = {};
+            loaded = 0;
+            var loadCallback = function() {
+                loaded += 1;
+                if(loaded === imagesNames.length) {
+                    allDone(result);
+                }
+            };
+            for(var i = 0 ; i < imagesNames.length ; i++) {
+                var imageName = imagesNames[i];
+                var url = imagesURLs[imageName];
+                if(url !== null) {
+                    var img = new Image();
+                    result[imageName] = img;
+                    img.onload = loadCallback;
+                    img.src = url;
+                }
+                else {
+                    loaded += 1;
+                    result[imageName] = null;
+                }
             }
+        };
+        window.onload = function() {
             function game_loop() {
                 update();
                 draw();
@@ -68,31 +86,17 @@
                 return false;
             }
             function draw(time, bounding_element) {
-                if(!left_to_preload) {
-                    draw_map(characters['me'].x, characters['me'].y);
-                    var character_list = Object.keys(characters);
-                    character_list.sort(function(a, b) {
-                        return characters[a].y - characters[b].y;
-                    });
-                    for(var i = 0 ; i < character_list.length ; i++) {
-                        if(is_visible(character_list[i])) {
-                            draw_character(character_list[i]);
-                        }
+                draw_map(characters['me'].x, characters['me'].y);
+                var character_list = Object.keys(characters);
+                character_list.sort(function(a, b) {
+                    return characters[a].y - characters[b].y;
+                });
+                for(var i = 0 ; i < character_list.length ; i++) {
+                    if(is_visible(character_list[i])) {
+                        draw_character(character_list[i]);
                     }
-                    draw_foreground(characters['me'].x, characters['me'].y);
                 }
-                else {
-                    ctx.fillStyle = '#000';
-                    ctx.fillRect(0, 0, game_canvas.width, game_canvas.height);
-                    
-                    ctx.fillStyle = '#ddd';
-                    var completion = (total_to_preload - left_to_preload) / total_to_preload;
-                    ctx.fillRect(game_canvas.width*.3, game_canvas.height*.5-10, completion * game_canvas.width*.3, 20);
-                    ctx.strokeStyle = '#fff';
-                    ctx.strokeRect(game_canvas.width*.3, game_canvas.height*.5-10, game_canvas.width*.3, 20);
-                    
-                    
-                }
+                draw_foreground(characters['me'].x, characters['me'].y);
             }
             document.addEventListener('keydown', function(event) {
                     var unit = 2;
@@ -137,10 +141,10 @@
             var max_x = 2350;
             var min_y = 150;
             var max_y = 280;
+            var map_width;
+            var loaded;
+            var images;
             var ctx = game_canvas.getContext('2d');
-            var images = {};
-            var total_to_preload = 7;
-            var left_to_preload = total_to_preload;
             var characters = {
                 'her': {
                     'sprites': {
@@ -172,19 +176,24 @@
                 }
             };
             
-            preload('sky');
-            preload('foreground');
-            preload('houses');
-            preload('her_sprite');
-            preload('me_sprite');
-            preload('me_sprite_right');
-            preload('me_sprite_idle');
             
-            var map_width = images['houses'].width;
-            game_canvas.width = 800;
-            game_canvas.height = 450;
-            Framer.reset();
-            Framer.start();
-            Framer.add(game_loop);
+            loadImages({
+                    sky: 'sky.png',
+                    foreground: 'foreground.png',
+                    houses: 'houses.png',
+                    her_sprite: 'her_sprite.png',
+                    me_sprite: 'me_sprite.png',
+                    me_sprite_right: 'me_sprite_right.png',
+                    me_sprite_idle: 'me_sprite_idle.png'
+                },
+                function(imgs) {
+                    images = imgs;
+                    map_width = images['houses'].width;
+                    game_canvas.width = 800;
+                    game_canvas.height = 450;
+                    Framer.reset();
+                    Framer.start();
+                    Framer.add(game_loop);
+                });
         }
 });
