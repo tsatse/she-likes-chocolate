@@ -141,6 +141,8 @@
                 }, false);
 
             var game_canvas = document.getElementById('game_canvas');
+            game_canvas.width = window.innerWidth;
+            game_canvas.height = window.innerHeight;
             var min_x = 200;
             var max_x = 2350;
             var min_y = 150;
@@ -182,19 +184,17 @@
             
             
             loadImages({
-                    sky: 'sky.png',
-                    foreground: 'foreground.png',
-                    houses: 'houses.png',
-                    her_sprite: 'her_sprite.png',
-                    me_sprite: 'me_sprite.png',
-                    me_sprite_right: 'me_sprite_right.png',
-                    me_sprite_idle: 'me_sprite_idle.png'
+                    sky: 'art/sky.png',
+                    foreground: 'art/foreground.png',
+                    houses: 'art/houses.png',
+                    her_sprite: 'art/her_sprite.png',
+                    me_sprite: 'art/me_sprite.png',
+                    me_sprite_right: 'art/me_sprite_right.png',
+                    me_sprite_idle: 'art/me_sprite_idle.png'
                 },
                 function(imgs) {
                     images = imgs;
                     map_width = images.houses.width;
-                    game_canvas.width = window.innerWidth;
-                    game_canvas.height = window.innerHeight;
                     Framer.reset();
                     Framer.start();
                     Framer.add(game_loop);

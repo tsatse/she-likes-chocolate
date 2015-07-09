@@ -1,0 +1,24 @@
+{
+  "name": "she-likes-chocolate",
+  "version": "0.0.0",
+  "description": "An adventure game",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsatse/she-likes-chocolate.git"
+  },
+  "keywords": [
+    "game",
+    "point&click",
+    "canvas"
+  ],
+  "author": "Joachim Revol-Tissot",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tsatse/she-likes-chocolate/issues"
+  },
+  "homepage": "https://github.com/tsatse/she-likes-chocolate#readme"
+}
