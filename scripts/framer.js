@@ -73,7 +73,7 @@
                     var new_index = Utils.get_new_id('update_func');
                     Framer.update_funcs[new_index] = function(time, bounding_object) {
                         callback(time, bounding_object);
-                    }
+                    };
                     return new_index;
                 },
                 

@@ -193,8 +193,8 @@
                 function(imgs) {
                     images = imgs;
                     map_width = images.houses.width;
-                    game_canvas.width = 800;
-                    game_canvas.height = 450;
+                    game_canvas.width = window.innerWidth;
+                    game_canvas.height = window.innerHeight;
                     Framer.reset();
                     Framer.start();
                     Framer.add(game_loop);
