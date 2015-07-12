@@ -25,10 +25,13 @@ window.onload = function() {
         var character = characters[characterName];
         var image = images[character.sprites[character.action]];
         var currentMapOffset = getMapOffset(characters.me.x, characters.me.y);
-        ctx.drawImage(image,
-            0, 0, image.width, image.height,
+        ctx.drawImage(
+            image,
+            0, 0,
+            image.width, image.height,
             character.x - currentMapOffset.x, character.y - currentMapOffset.y,
-            image.width, image.height);
+            image.width, image.height
+            );
     }
 
     function getMapOffset(x, y) {
@@ -42,24 +45,41 @@ window.onload = function() {
 
     function drawMap(x, y) {
         var mapOffset = getMapOffset(x, y);
-        ctx.drawImage(images.sky, 0, 0, gameCanvas.width, gameCanvas.height, 0, 0, gameCanvas.width, gameCanvas.height);
-        ctx.drawImage(images.houses,
-            Math.min(mapOffset.x, mapWidth-gameCanvas.width), mapOffset.y, gameCanvas.width, gameCanvas.height,
-            0, 0, gameCanvas.width, gameCanvas.height);
+        ctx.drawImage(
+            images.sky,
+            0, 0,
+            gameCanvas.width, gameCanvas.height,
+            0, 0,
+            gameCanvas.width, gameCanvas.height
+            );
+        ctx.drawImage(
+            images.houses,
+            Math.min(mapOffset.x, mapWidth-gameCanvas.width), mapOffset.y,
+            gameCanvas.width, gameCanvas.height,
+            0, 0,
+            gameCanvas.width, gameCanvas.height
+            );
         
     }
 
     function drawForeground(x, y) {
         var mapOffset = getMapOffset(x, y);
-        ctx.drawImage(images.foreground,
-            (mapOffset.x * 1.5) % (mapWidth - gameCanvas.width), mapOffset.y, gameCanvas.width, gameCanvas.height,
-            0, 0, gameCanvas.width, gameCanvas.height);
+        ctx.drawImage(
+            images.foreground,
+            (mapOffset.x * 1.5) % (mapWidth - gameCanvas.width), mapOffset.y,
+            gameCanvas.width, gameCanvas.height,
+            0, 0,
+            gameCanvas.width, gameCanvas.height
+            );
     }
 
     function isVisible(characterName) {
         var character = characters[characterName];
         var currentMapOffset = getMapOffset(character.x, character.y);
-        if((character.x - currentMapOffset.x) > 0 && (character.x - currentMapOffset.x) < gameCanvas.width) {
+        if(
+            (character.x - currentMapOffset.x) > 0 &&
+            (character.x - currentMapOffset.x) < gameCanvas.width
+        ) {
             return true;
         }
         return false;
