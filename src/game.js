@@ -1,33 +1,6 @@
 ﻿var Utils = require('./utils');
 
 
-function loadImages(imagesURLs, allDone) {
-    var imagesNames = Object.keys(imagesURLs);
-    var result = {};
-    var loaded = 0;
-
-    var loadCallback = function() {
-        loaded += 1;
-        if(loaded === imagesNames.length) {
-            allDone(result);
-        }
-    };
-    for(var i = 0 ; i < imagesNames.length ; i++) {
-        var imageName = imagesNames[i];
-        var url = imagesURLs[imageName];
-        if(url !== null) {
-            var img = new Image();
-            result[imageName] = img;
-            img.onload = loadCallback;
-            img.src = url;
-        }
-        else {
-            loaded += 1;
-            result[imageName] = null;
-        }
-    }
-}
-
 window.onload = function() {
     function gameLoop() {
         update();
@@ -59,18 +32,14 @@ window.onload = function() {
     }
 
     function getMapOffset(x, y) {
-        var result = {x:0,y:0};
-        if(x > (gameCanvas.width/2)) {
-            result.x = Math.min(x - gameCanvas.width/2, mapWidth - gameCanvas.width);
+        var result = {x:0, y:0};
+        if(x > (gameCanvas.width / 2)) {
+            result.x = Math.min(x - gameCanvas.width / 2, mapWidth - gameCanvas.width);
         }
-        /*
-        if(y < (gameCanvas.height/2)) {
-            result.y = y - gameCanvas.height/2;
-        }
-        */
         
         return result;
     }
+
     function drawMap(x, y) {
         var mapOffset = getMapOffset(x, y);
         ctx.drawImage(images.sky, 0, 0, gameCanvas.width, gameCanvas.height, 0, 0, gameCanvas.width, gameCanvas.height);
@@ -79,12 +48,14 @@ window.onload = function() {
             0, 0, gameCanvas.width, gameCanvas.height);
         
     }
+
     function drawForeground(x, y) {
         var mapOffset = getMapOffset(x, y);
         ctx.drawImage(images.foreground,
-            (mapOffset.x*1.5)%(mapWidth-gameCanvas.width), mapOffset.y, gameCanvas.width, gameCanvas.height,
+            (mapOffset.x * 1.5) % (mapWidth - gameCanvas.width), mapOffset.y, gameCanvas.width, gameCanvas.height,
             0, 0, gameCanvas.width, gameCanvas.height);
     }
+
     function isVisible(characterName) {
         var character = characters[characterName];
         var currentMapOffset = getMapOffset(character.x, character.y);
@@ -93,6 +64,7 @@ window.onload = function() {
         }
         return false;
     }
+
     function draw(time, boundingElement) {
         drawMap(characters.me.x, characters.me.y);
         var characterList = Object.keys(characters);
@@ -187,7 +159,7 @@ window.onload = function() {
     };
     
     
-    loadImages({
+    Utils.loadImages({
             sky: 'art/sky.png',
             foreground: 'art/foreground.png',
             houses: 'art/houses.png',
