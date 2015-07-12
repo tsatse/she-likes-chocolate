@@ -1,11 +1,11 @@
 ﻿var Utils = require('./utils');
-var Framer = require('./framer');
 
 
 function loadImages(imagesURLs, allDone) {
     var imagesNames = Object.keys(imagesURLs);
     var result = {};
-    loaded = 0;
+    var loaded = 0;
+
     var loadCallback = function() {
         loaded += 1;
         if(loaded === imagesNames.length) {
@@ -29,95 +29,96 @@ function loadImages(imagesURLs, allDone) {
 }
 
 window.onload = function() {
-    function game_loop() {
+    function gameLoop() {
         update();
         draw();
+        requestAnimationFrame(gameLoop);
     }
     
     function update() {
-        var character_list = Object.keys(characters);
-        for(var i = 0 ; i < character_list.length ; i++) {
-            var character = characters[character_list[i]];
-            if(character.x + character.dx > min_x && character.x + character.dx < max_x) {
+        var characterList = Object.keys(characters);
+        for(var i = 0 ; i < characterList.length ; i++) {
+            var character = characters[characterList[i]];
+            if(character.x + character.dx > minX && character.x + character.dx < maxX) {
                 character.x += character.dx;
             }
-            if(character.y + character.dy > min_y && character.y + character.dy < max_y) {
+            if(character.y + character.dy > minY && character.y + character.dy < maxY) {
                 character.y += character.dy;
             }
         }
     }
     
-    function draw_character(character_name) {
-        var character = characters[character_name];
+    function drawCharacter(characterName) {
+        var character = characters[characterName];
         var image = images[character.sprites[character.action]];
-        var current_map_offset = get_map_offset(characters.me.x, characters.me.y);
+        var currentMapOffset = getMapOffset(characters.me.x, characters.me.y);
         ctx.drawImage(image,
             0, 0, image.width, image.height,
-            character.x - current_map_offset.x, character.y - current_map_offset.y,
+            character.x - currentMapOffset.x, character.y - currentMapOffset.y,
             image.width, image.height);
     }
 
-    function get_map_offset(x, y) {
+    function getMapOffset(x, y) {
         var result = {x:0,y:0};
-        if(x > (game_canvas.width/2)) {
-            result.x = Math.min(x - game_canvas.width/2, map_width - game_canvas.width);
+        if(x > (gameCanvas.width/2)) {
+            result.x = Math.min(x - gameCanvas.width/2, mapWidth - gameCanvas.width);
         }
         /*
-        if(y < (game_canvas.height/2)) {
-            result.y = y - game_canvas.height/2;
+        if(y < (gameCanvas.height/2)) {
+            result.y = y - gameCanvas.height/2;
         }
         */
         
         return result;
     }
-    function draw_map(x, y) {
-        var map_offset = get_map_offset(x, y);
-        ctx.drawImage(images.sky, 0, 0, game_canvas.width, game_canvas.height, 0, 0, game_canvas.width, game_canvas.height);
+    function drawMap(x, y) {
+        var mapOffset = getMapOffset(x, y);
+        ctx.drawImage(images.sky, 0, 0, gameCanvas.width, gameCanvas.height, 0, 0, gameCanvas.width, gameCanvas.height);
         ctx.drawImage(images.houses,
-            Math.min(map_offset.x, map_width-game_canvas.width), map_offset.y, game_canvas.width, game_canvas.height,
-            0, 0, game_canvas.width, game_canvas.height);
+            Math.min(mapOffset.x, mapWidth-gameCanvas.width), mapOffset.y, gameCanvas.width, gameCanvas.height,
+            0, 0, gameCanvas.width, gameCanvas.height);
         
     }
-    function draw_foreground(x, y) {
-        var map_offset = get_map_offset(x, y);
+    function drawForeground(x, y) {
+        var mapOffset = getMapOffset(x, y);
         ctx.drawImage(images.foreground,
-            (map_offset.x*1.5)%(map_width-game_canvas.width), map_offset.y, game_canvas.width, game_canvas.height,
-            0, 0, game_canvas.width, game_canvas.height);
+            (mapOffset.x*1.5)%(mapWidth-gameCanvas.width), mapOffset.y, gameCanvas.width, gameCanvas.height,
+            0, 0, gameCanvas.width, gameCanvas.height);
     }
-    function is_visible(character_name) {
-        var character = characters[character_name];
-        var current_map_offset = get_map_offset(character.x, character.y);
-        if((character.x - current_map_offset.x) > 0 && (character.x - current_map_offset.x) < game_canvas.width) {
+    function isVisible(characterName) {
+        var character = characters[characterName];
+        var currentMapOffset = getMapOffset(character.x, character.y);
+        if((character.x - currentMapOffset.x) > 0 && (character.x - currentMapOffset.x) < gameCanvas.width) {
             return true;
         }
         return false;
     }
-    function draw(time, bounding_element) {
-        draw_map(characters.me.x, characters.me.y);
-        var character_list = Object.keys(characters);
-        character_list.sort(function(a, b) {
+    function draw(time, boundingElement) {
+        drawMap(characters.me.x, characters.me.y);
+        var characterList = Object.keys(characters);
+        characterList.sort(function(a, b) {
             return characters[a].y - characters[b].y;
         });
-        for(var i = 0 ; i < character_list.length ; i++) {
-            if(is_visible(character_list[i])) {
-                draw_character(character_list[i]);
+        for(var i = 0 ; i < characterList.length ; i++) {
+            if(isVisible(characterList[i])) {
+                drawCharacter(characterList[i]);
             }
         }
-        draw_foreground(characters.me.x, characters.me.y);
+        drawForeground(characters.me.x, characters.me.y);
     }
     document.addEventListener('keydown', function(event) {
             var unit = 2;
             characters.me.action = 'idle';
-            if(event.keyCode == 37) {
+            if(event.keyCode === 37) {
                 characters.me.dx = -unit;
             }
-            if(event.keyCode == 39) {
+            if(event.keyCode === 39) {
                 characters.me.dx = unit;
             }
-            if(event.keyCode == 38) {
+            if(event.keyCode === 38) {
                 characters.me.dy = -unit;
             }
-            if(event.keyCode == 40) {
+            if(event.keyCode === 40) {
                 characters.me.dy = unit;
             }
             
@@ -129,37 +130,37 @@ window.onload = function() {
             }
         }, false);
     document.addEventListener('keyup', function(event) {
-            if(event.keyCode == 37) {
+            if(event.keyCode === 37) {
                 characters.me.dx = 0;
             }
-            if(event.keyCode == 39) {
+            if(event.keyCode === 39) {
                 characters.me.dx = 0;
             }
-            if(event.keyCode == 38) {
+            if(event.keyCode === 38) {
                 characters.me.dy = 0;
             }
-            if(event.keyCode == 40) {
+            if(event.keyCode === 40) {
                 characters.me.dy = 0;
             }
         }, false);
 
-    var game_canvas = document.getElementById('game_canvas');
-    game_canvas.width = window.innerWidth;
-    game_canvas.height = window.innerHeight;
-    var min_x = 200;
-    var max_x = 2350;
-    var min_y = 150;
-    var max_y = 280;
-    var map_width;
+    var gameCanvas = document.getElementById('game-canvas');
+    gameCanvas.width = window.innerWidth;
+    gameCanvas.height = window.innerHeight;
+    var minX = 200;
+    var maxX = 2350;
+    var minY = 150;
+    var maxY = 280;
+    var mapWidth;
     var loaded;
     var images;
-    var ctx = game_canvas.getContext('2d');
+    var ctx = gameCanvas.getContext('2d');
     var characters = {
         'her': {
             'sprites': {
-                'idle': 'her_sprite',
-                'walk_left': 'her_sprite',
-                'walk_right': 'her_sprite',
+                'idle': 'herSprite',
+                'walk_left': 'herSprite',
+                'walk_right': 'herSprite',
             },
             'action': 'idle',
             'phase': 0,
@@ -170,11 +171,11 @@ window.onload = function() {
         },
         'me': {
             'sprites': {
-                'idle': 'me_sprite_idle',
-                'walk_left': 'me_sprite',
-                'walk_right': 'me_sprite_right',
-                'walk_up': 'me_sprite_idle',
-                'walk_down': 'me_sprite_idle'
+                'idle': 'meSpriteIdle',
+                'walk_left': 'meSprite',
+                'walk_right': 'meSpriteRight',
+                'walk_up': 'meSpriteIdle',
+                'walk_down': 'meSpriteIdle'
             },
             'action': 'idle',
             'phase': 0,
@@ -190,16 +191,14 @@ window.onload = function() {
             sky: 'art/sky.png',
             foreground: 'art/foreground.png',
             houses: 'art/houses.png',
-            her_sprite: 'art/her_sprite.png',
-            me_sprite: 'art/me_sprite.png',
-            me_sprite_right: 'art/me_sprite_right.png',
-            me_sprite_idle: 'art/me_sprite_idle.png'
+            herSprite: 'art/her_sprite.png',
+            meSprite: 'art/me_sprite.png',
+            meSpriteRight: 'art/me_sprite_right.png',
+            meSpriteIdle: 'art/me_sprite_idle.png'
         },
         function(imgs) {
             images = imgs;
-            map_width = images.houses.width;
-            Framer.reset();
-            Framer.start();
-            Framer.add(game_loop);
+            mapWidth = images.houses.width;
+            requestAnimationFrame(gameLoop);
         });
 };
