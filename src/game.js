@@ -1,4 +1,5 @@
 ﻿var Utils = require('./utils');
+var Character = require('./character');
 
 
 window.onload = function() {
@@ -18,19 +19,22 @@ window.onload = function() {
             if(character.y + character.dy > minY && character.y + character.dy < maxY) {
                 character.y += character.dy;
             }
+            character.phase = (character.phase + 1) % (images[character.sprites[character.action]].width / character.width);
         }
     }
     
     function drawCharacter(characterName) {
         var character = characters[characterName];
         var image = images[character.sprites[character.action]];
+        var xOffsetInSource = character.phase * character.width;
+
         var currentMapOffset = getMapOffset(characters.me.x, characters.me.y);
         ctx.drawImage(
             image,
-            0, 0,
-            image.width, image.height,
+            xOffsetInSource, 0,
+            character.width, character.height,
             character.x - currentMapOffset.x, character.y - currentMapOffset.y,
-            image.width, image.height
+            character.width, character.height
             );
     }
 
@@ -54,7 +58,7 @@ window.onload = function() {
             );
         ctx.drawImage(
             images.houses,
-            Math.min(mapOffset.x, mapWidth-gameCanvas.width), mapOffset.y,
+            Math.min(mapOffset.x, mapWidth - gameCanvas.width), mapOffset.y,
             gameCanvas.width, gameCanvas.height,
             0, 0,
             gameCanvas.width, gameCanvas.height
@@ -100,7 +104,7 @@ window.onload = function() {
     }
     document.addEventListener('keydown', function(event) {
             var unit = 2;
-            characters.me.action = 'idle';
+            characters.me.setProperty('action', 'idle');
             if(event.keyCode === 37) {
                 characters.me.dx = -unit;
             }
@@ -115,12 +119,13 @@ window.onload = function() {
             }
             
             if(characters.me.dx > 0) {
-                characters.me.action = 'walk_right';
+                characters.me.setProperty('action', 'walkRight');
             }
             if(characters.me.dx < 0) {
-                characters.me.action = 'walk_left';
+                characters.me.setProperty('action', 'walkLeft');
             }
         }, false);
+
     document.addEventListener('keyup', function(event) {
             if(event.keyCode === 37) {
                 characters.me.dx = 0;
@@ -148,45 +153,54 @@ window.onload = function() {
     var images;
     var ctx = gameCanvas.getContext('2d');
     var characters = {
-        'her': {
-            'sprites': {
-                'idle': 'herSprite',
-                'walk_left': 'herSprite',
-                'walk_right': 'herSprite',
-            },
-            'action': 'idle',
-            'phase': 0,
-            'x':125,
-            'y':155,
-            'dx': 0,
-            'dy': 0
-        },
-        'me': {
-            'sprites': {
-                'idle': 'meSpriteIdle',
-                'walk_left': 'meSprite',
-                'walk_right': 'meSpriteRight',
-                'walk_up': 'meSpriteIdle',
-                'walk_down': 'meSpriteIdle'
-            },
-            'action': 'idle',
-            'phase': 0,
-            'x':202,
-            'y':185,
-            'dx': 0,
-            'dy': 0
-        }
+        her: new Character({
+                    idle: 'herSprite',
+                    walkLeft: 'herSprite',
+                    walkRight: 'herSprite',
+                },
+                {
+                    width: 90,
+                    height: 150
+                },
+                {
+                    x: 125,
+                    y: 155
+                }
+        ),
+        me: new Character({
+                    idle: 'meSpriteIdle',
+                    walkLeft: 'meSprite',
+                    walkRight: 'meSpriteRight',
+                    walkUp: 'meSpriteIdle',
+                    walkDown: 'meSpriteIdle'
+                },
+                {
+                    width: 90,
+                    height: 150
+                },
+                {
+                    x: 202,
+                    y: 185
+                }
+        )
     };
     
     
     Utils.loadImages({
-            sky: 'art/sky.png',
-            foreground: 'art/foreground.png',
-            houses: 'art/houses.png',
-            herSprite: 'art/her_sprite.png',
-            meSprite: 'art/me_sprite.png',
-            meSpriteRight: 'art/me_sprite_right.png',
-            meSpriteIdle: 'art/me_sprite_idle.png'
+            sky:
+                'art/sky.png',
+            foreground:
+                'art/foreground.png',
+            houses:
+                'art/houses.png',
+            herSprite:
+                'art/her_sprite.png',
+            meSprite:
+                'art/me_sprite.png',
+            meSpriteRight:
+                'art/me_sprite_right.png',
+            meSpriteIdle:
+                'art/me_sprite_idle.png'
         },
         function(imgs) {
             images = imgs;
