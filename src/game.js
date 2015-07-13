@@ -22,34 +22,34 @@ var images;
 var ctx = gameCanvas.getContext('2d');
 var characters = {
     her: new Character({
-                idle: 'herSprite',
-                walkLeft: 'herSprite',
-                walkRight: 'herSprite',
-            },
-            {
-                width: 90,
-                height: 150
-            },
-            {
-                x: 125,
-                y: 155
-            }
+            idle: 'herSprite',
+            walkLeft: 'herSprite',
+            walkRight: 'herSprite',
+        },
+        {
+            width: 90,
+            height: 150
+        },
+        {
+            x: 125,
+            y: 155
+        }
     ),
     me: new Character({
-                idle: 'meSpriteIdle',
-                walkLeft: 'meSprite',
-                walkRight: 'meSpriteRight',
-                walkUp: 'meSpriteIdle',
-                walkDown: 'meSpriteIdle'
-            },
-            {
-                width: 90,
-                height: 150
-            },
-            {
-                x: 202,
-                y: 185
-            }
+            idle: 'meSpriteIdle',
+            walkLeft: 'meSprite',
+            walkRight: 'meSpriteRight',
+            walkUp: 'meSpriteIdle',
+            walkDown: 'meSpriteIdle'
+        },
+        {
+            width: 90,
+            height: 150
+        },
+        {
+            x: 202,
+            y: 185
+        }
     )
 };
 
