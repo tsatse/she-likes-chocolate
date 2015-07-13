@@ -70,7 +70,7 @@ window.onload = function() {
         var mapOffset = getMapOffset(x, y);
         ctx.drawImage(
             images.foreground,
-            (mapOffset.x * 1.5) % (mapWidth - gameCanvas.width), mapOffset.y,
+            (mapOffset.x * 1.5) % images.foreground.width, mapOffset.y,
             gameCanvas.width, gameCanvas.height,
             0, 0,
             gameCanvas.width, gameCanvas.height
