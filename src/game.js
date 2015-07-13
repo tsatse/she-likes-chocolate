@@ -63,33 +63,21 @@ function updateMovement(time) {
     var unit = 2;
     characters.me.dx = 0;
     characters.me.dy = 0;
-    if(keys[37]) {
-        characters.me.dx -= unit;
-    }
-    if(keys[39]) {
-        characters.me.dx += unit;
-    }
-    if(keys[38]) {
-        characters.me.dy -= unit;
-    }
-    if(keys[40]) {
-        characters.me.dy += unit;
-    }
-    if(characters.me.dx > 0) {
-        characters.me.setProperty('action', 'walkRight');
-    }
-    else if(characters.me.dx < 0) {
-        characters.me.setProperty('action', 'walkLeft');
-    }
-    else if(characters.me.dy > 0) {
-        characters.me.setProperty('action', 'walkUp');
-    }
-    else if(characters.me.dy < 0) {
-        characters.me.setProperty('action', 'walkDown');
-    }
-    else {
-        characters.me.setProperty('action', 'idle');
-    }
+    if(keys[37]) { characters.me.dx -= unit;}
+    if(keys[39]) { characters.me.dx += unit;}
+    if(keys[38]) { characters.me.dy -= unit;}
+    if(keys[40]) { characters.me.dy += unit;}
+
+    if(characters.me.dx > 0)
+        { characters.me.setProperty('action', 'walkRight');}
+    else if(characters.me.dx < 0)
+        { characters.me.setProperty('action', 'walkLeft');}
+    else if(characters.me.dy > 0)
+        { characters.me.setProperty('action', 'walkUp');}
+    else if(characters.me.dy < 0)
+        { characters.me.setProperty('action', 'walkDown');}
+    else
+        { characters.me.setProperty('action', 'idle'); }
 }
 
 function updateFrames(time) {
@@ -158,7 +146,6 @@ function drawMap(x, y) {
         0, 0,
         gameCanvas.width, gameCanvas.height
         );
-    
 }
 
 function drawForeground(x, y) {
@@ -199,7 +186,6 @@ function draw(time, boundingElement) {
 }
 
 document.addEventListener('keydown', function(event) {
-        characters.me.setProperty('action', 'idle');
         keys[event.keyCode] = true;
     }, false);
 
