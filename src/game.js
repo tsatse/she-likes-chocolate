@@ -2,6 +2,13 @@
 var Character = require('./character');
 
 
+var keys = {
+    37: false,
+    38: false,
+    39: false,
+    40: false
+};
+
 window.onload = function() {
     function gameLoop() {
         update();
@@ -9,7 +16,41 @@ window.onload = function() {
         requestAnimationFrame(gameLoop);
     }
     
+    function updateMovement() {
+        var unit = 2;
+        characters.me.dx = 0;
+        characters.me.dy = 0;
+        if(keys[37]) {
+            characters.me.dx -= unit;
+        }
+        if(keys[39]) {
+            characters.me.dx += unit;
+        }
+        if(keys[38]) {
+            characters.me.dy -= unit;
+        }
+        if(keys[40]) {
+            characters.me.dy += unit;
+        }
+        if(characters.me.dx > 0) {
+            characters.me.setProperty('action', 'walkRight');
+        }
+        else if(characters.me.dx < 0) {
+            characters.me.setProperty('action', 'walkLeft');
+        }
+        else if(characters.me.dy > 0) {
+            characters.me.setProperty('action', 'walkUp');
+        }
+        else if(characters.me.dy < 0) {
+            characters.me.setProperty('action', 'walkDown');
+        }
+        else {
+            characters.me.setProperty('action', 'idle');
+        }
+    }
+    
     function update() {
+        updateMovement();
         var characterList = Object.keys(characters);
         for(var i = 0 ; i < characterList.length ; i++) {
             var character = characters[characterList[i]];
@@ -102,43 +143,14 @@ window.onload = function() {
         }
         drawForeground(characters.me.x, characters.me.y);
     }
+
     document.addEventListener('keydown', function(event) {
-            var unit = 2;
             characters.me.setProperty('action', 'idle');
-            if(event.keyCode === 37) {
-                characters.me.dx = -unit;
-            }
-            if(event.keyCode === 39) {
-                characters.me.dx = unit;
-            }
-            if(event.keyCode === 38) {
-                characters.me.dy = -unit;
-            }
-            if(event.keyCode === 40) {
-                characters.me.dy = unit;
-            }
-            
-            if(characters.me.dx > 0) {
-                characters.me.setProperty('action', 'walkRight');
-            }
-            if(characters.me.dx < 0) {
-                characters.me.setProperty('action', 'walkLeft');
-            }
+            keys[event.keyCode] = true;
         }, false);
 
     document.addEventListener('keyup', function(event) {
-            if(event.keyCode === 37) {
-                characters.me.dx = 0;
-            }
-            if(event.keyCode === 39) {
-                characters.me.dx = 0;
-            }
-            if(event.keyCode === 38) {
-                characters.me.dy = 0;
-            }
-            if(event.keyCode === 40) {
-                characters.me.dy = 0;
-            }
+            keys[event.keyCode] = false;
         }, false);
 
     var gameCanvas = document.getElementById('game-canvas');

@@ -18,10 +18,12 @@ Character.prototype = {
     },
 
     setProperty: function setProperty(name, value) {
-        if(name === 'action') {
-            this.phase = 0;
+        if(this[name] !== value) {
+            if(name === 'action') {
+                this.phase = 0;
+            }
+            this[name] = value;
         }
-        this[name] = value;
     }
 };
 
