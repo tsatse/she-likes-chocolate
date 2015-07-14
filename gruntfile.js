@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 
         browserify2: {
             main: {
-                entry: './src/game.js',
+                entry: './src/index.js',
                 compile: './dist/index.js',
                 debug: true
             }
