@@ -20,7 +20,7 @@ Dialogue.prototype = {
                 this.goToLine(this.currentLine + 1);
             }
             else {
-                this.host.nextPhase();
+                this.host.gotoSink('end');
             }
         }
     },
@@ -43,10 +43,17 @@ Dialogue.prototype = {
             }
 
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.font = 'normal 14pt helvetica';
+            var metrics = ctx.measureText(currentLine.text);
             ctx.fillStyle = 'white';
-            ctx.fillRect(position.x, position.y, 350, 200);
+            if(this.defaultPositions[currentLine.who].color) {
+                ctx.fillStyle = this.defaultPositions[currentLine.who].color;
+            }
+            ctx.fillRect(position.x, position.y, metrics.width + 10, 30);
             ctx.fillStyle = 'black';
-            ctx.fillText(currentLine.text, position.x, position.y + 10);
+            ctx.fillText(currentLine.text, position.x + 5, position.y + 5);
         }
     }
 };

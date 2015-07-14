@@ -1,3 +1,5 @@
+var RSVP = require('rsvp');
+
 var Utils = require('utils');
 var keys = require('./keys');
 
@@ -8,18 +10,16 @@ var gameplays = {
 };
 
 
-function Game(canvas, phases) {
-    this.phaseIndex = null;
-    this.currentPhase = null;
-    if(phases) {
-        this.setPhases(phases);
-    }
+function Game(canvas, gameStructure) {
+    this.phaseName = null;
+    this.gameStructure = gameStructure;
+    this.phaseInstances = {};
     this.registeredEventHandlers = {};
     this.lastUpdate = null;
+    this.keys = keys;
     this.gameCanvas = canvas;
     this.gameCanvas.width = window.innerWidth;
     this.gameCanvas.height = window.innerHeight;
-    this.keys = keys;
     this.ctx = this.gameCanvas.getContext('2d');
     document.addEventListener('keydown', function(event) {
             this.keys[event.keyCode] = true;
@@ -37,64 +37,75 @@ function Game(canvas, phases) {
 }
 
 Game.prototype = {
-    setPhases: function setPhases(phases) {
-        this.phases = phases;
-    },
-
     start: function start() {
-        this.gotoPhase(0, function() {
-            requestAnimationFrame(this.loop.bind(this));
-        }.bind(this));
+        return this.gotoPhase(this.gameStructure.entry)
+            .then(function() {
+                requestAnimationFrame(this.loop.bind(this));
+            }.bind(this));
     },
 
-    setPhase: function setPhase(phaseDescription) {
-        this.currentPhase = new gameplays[phaseDescription.gameplayType](this);
-        this.currentPhase.host = this;
+    setPhase: function setPhase(phaseName, phaseDescription) {
+        if(this.phaseInstances[phaseName]) {
+            return;
+        }
+        this.phaseInstances[phaseName] = new gameplays[phaseDescription.gameplayType](this);
+        this.phaseInstances[phaseName].host = this;
         for(var propertyName in phaseDescription) {
             if(['images', 'gameplayType'].indexOf(propertyName) === -1) {
-                this.currentPhase[propertyName] = phaseDescription[propertyName];
+                this.phaseInstances[phaseName][propertyName] = phaseDescription[propertyName];
             }
         }
+    },
+
+    gotoSink: function gotoSink(sinkName) {
+        return this.gotoPhase(this.gameStructure.plan[this.phaseName][sinkName]);
     },
 
     registerEventHandler: function registerEventHandler(eventName, callback) {
         this.registeredEventHandlers[eventName] = callback;
     },
 
-    nextPhase: function nextPhase() {
-        if((this.phaseIndex + 1) < this.phases.length) {
-            this.gotoPhase(this.phaseIndex + 1);
-        }
+    loadImages: function loadImages(images) {
+        return new RSVP.Promise(function(resolve, reject) {
+            if(images) {
+                Utils.loadImages(images, function(imgs) {
+                    resolve(imgs);
+                });
+            }
+        });
     },
 
-    gotoPhase: function gotoPhase(phaseNumber, callback) {
-        this.phaseIndex = phaseNumber;
-        if(this.phases[this.phaseIndex]) {
-            var phaseDescription = this.phases[this.phaseIndex];
-            if(phaseDescription.images) {
-                Utils.loadImages(
-                    phaseDescription.images,
-                    function(imgs) {
-                        this.images = imgs;
-                        this.setPhase(phaseDescription);
-                        callback();
-                    }.bind(this)
-                );
-            }
-            else {
-                this.setPhase(phaseDescription);
-                callback();
-            }
-        }
+    gotoPhase: function gotoPhase(phaseName) {
+        var phaseDescription;
+
+        return RSVP.Promise.resolve()
+            .then(function() {
+                this.phaseName = phaseName;
+                if(!this.gameStructure.phases[this.phaseName]) {
+                    throw(new Error('No phase with name ' + phaseName));
+                }
+                phaseDescription = this.gameStructure.phases[this.phaseName];
+                if(phaseDescription.images) {
+                    return this.loadImages(phaseDescription.images);
+                }
+            }.bind(this))
+            .then(function(images) {
+                if(images) {
+                    this.images = images;
+                }                
+                return this.setPhase(this.phaseName, phaseDescription);
+            }.bind(this));
     },
 
     loop: function loop(time) {
         if(!this.lastUpdate) {
             this.lastUpdate = time;
         }
-        this.currentPhase.update(time);
-        this.lastUpdate = time;
-        this.currentPhase.draw(time);
+        if(this.phaseInstances[this.phaseName]) {
+            this.phaseInstances[this.phaseName].update(time);
+            this.lastUpdate = time;
+            this.phaseInstances[this.phaseName].draw(time);
+        }
         requestAnimationFrame(this.loop.bind(this));
     }
 };
