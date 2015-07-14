@@ -43,6 +43,9 @@ Wander.prototype = {
             { this.characters.me.setProperty('action', 'walkDown');}
         else
             { this.characters.me.setProperty('action', 'idle'); }
+        if(this.characters.me.x === 202 && this.characters.me.action === 'walkLeft') {
+            this.host.gotoSink('talkToHer');
+        }
     },
 
     drawCharacter: function drawCharacter(characterName) {

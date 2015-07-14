@@ -1,5 +1,14 @@
 function Dialogue(host) {
     this.currentLine = null;
+    this.saveCanvas = document.createElement('canvas');
+    this.saveCanvas.width = host.gameCanvas.width;
+    this.saveCanvas.height = host.gameCanvas.height;
+    var ctx = this.saveCanvas.getContext('2d');
+    ctx.drawImage(
+        host.gameCanvas,
+        0, 0, host.gameCanvas.width, host.gameCanvas.height,
+        0, 0, host.gameCanvas.width, host.gameCanvas.height
+        );
     host.registerEventHandler('keyup', this.onKeyUp.bind(this));
     this.goToNextLine();
 }
@@ -42,7 +51,11 @@ Dialogue.prototype = {
                 position = currentLine.position;
             }
 
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.drawImage(
+                this.saveCanvas,
+                0, 0, this.host.gameCanvas.width, this.host.gameCanvas.height,
+                0, 0, this.host.gameCanvas.width, this.host.gameCanvas.height
+                );
             ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
             ctx.font = 'normal 14pt helvetica';
@@ -51,7 +64,11 @@ Dialogue.prototype = {
             if(this.defaultPositions[currentLine.who].color) {
                 ctx.fillStyle = this.defaultPositions[currentLine.who].color;
             }
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(position.x, position.y, metrics.width + 10, 30);
+            ctx.globalAlpha = 0.85;
             ctx.fillRect(position.x, position.y, metrics.width + 10, 30);
+            ctx.globalAlpha = 1;
             ctx.fillStyle = 'black';
             ctx.fillText(currentLine.text, position.x + 5, position.y + 5);
         }

@@ -105,7 +105,7 @@ var theGame = new Game(
             firstDialogue: {end: 'goingForChoco'},
             goingForChoco: {talkToHer: 'firstDialogue'}
         },
-        entry: 'firstDialogue'
+        entry: 'goingForChoco'
     }
 );
 
