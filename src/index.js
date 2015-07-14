@@ -3,8 +3,45 @@ var Character = require('./character');
 var Game = require('./game');
 
 var theGame = new Game(
-    document.getElementById('game-canvas'),
-    [{
+    document.getElementById('game-canvas'), [
+    {
+        gameplayType: 'Dialogue',
+        defaultPositions: {
+            me: {x: 202, y: 185},
+            her: {x: 125, y: 155}
+        },
+        lines: [
+            {
+                who: 'me',
+                text: "Hey ! What's up ?"
+            },
+            {
+                who: 'her',
+                text: "Hi..."
+            },
+            {
+                who: 'me',
+                text: "What's wrong ? you seem so down."
+            },
+            {
+                who: 'her',
+                text: "It's ok, I'm just in the mood for staring at the sea for a while."
+            },
+            {
+                who: 'me',
+                text: "What can I do to cheer you up ?"
+            },
+            {
+                who: 'her',
+                text: "All I wish for right now is a little piece of chocolate."
+            },
+            {
+                who: 'me',
+                text: "Really ? Ah ah, just you wait !"
+            }
+        ]
+    },
+    {
         gameplayType: 'Wander',
         mapWidth: 2400,
         minX: 200,

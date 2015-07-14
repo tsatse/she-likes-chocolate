@@ -14,6 +14,7 @@ function Game(canvas, phases) {
     if(phases) {
         this.setPhases(phases);
     }
+    this.registeredEventHandlers = {};
     this.lastUpdate = null;
     this.gameCanvas = canvas;
     this.gameCanvas.width = window.innerWidth;
@@ -22,10 +23,16 @@ function Game(canvas, phases) {
     this.ctx = this.gameCanvas.getContext('2d');
     document.addEventListener('keydown', function(event) {
             this.keys[event.keyCode] = true;
+            if(this.registeredEventHandlers.keydown) {
+                this.registeredEventHandlers.keydown(event);
+            }
         }.bind(this), false);
 
     document.addEventListener('keyup', function(event) {
             this.keys[event.keyCode] = false;
+            if(this.registeredEventHandlers.keyup) {
+                this.registeredEventHandlers.keyup(event);
+            }
         }.bind(this), false);
 }
 
@@ -40,6 +47,26 @@ Game.prototype = {
         }.bind(this));
     },
 
+    setPhase: function setPhase(phaseDescription) {
+        this.currentPhase = new gameplays[phaseDescription.gameplayType](this);
+        this.currentPhase.host = this;
+        for(var propertyName in phaseDescription) {
+            if(['images', 'gameplayType'].indexOf(propertyName) === -1) {
+                this.currentPhase[propertyName] = phaseDescription[propertyName];
+            }
+        }
+    },
+
+    registerEventHandler: function registerEventHandler(eventName, callback) {
+        this.registeredEventHandlers[eventName] = callback;
+    },
+
+    nextPhase: function nextPhase() {
+        if((this.phaseIndex + 1) < this.phases.length) {
+            this.gotoPhase(this.phaseIndex + 1);
+        }
+    },
+
     gotoPhase: function gotoPhase(phaseNumber, callback) {
         this.phaseIndex = phaseNumber;
         if(this.phases[this.phaseIndex]) {
@@ -49,16 +76,14 @@ Game.prototype = {
                     phaseDescription.images,
                     function(imgs) {
                         this.images = imgs;
-                        this.currentPhase = new gameplays[phaseDescription.gameplayType](phaseDescription, this);
-                        this.currentPhase.host = this;
-                        for(var propertyName in phaseDescription) {
-                            if(['images', 'gameplayType'].indexOf(propertyName) === -1) {
-                                this.currentPhase[propertyName] = phaseDescription[propertyName];
-                            }
-                        }
+                        this.setPhase(phaseDescription);
                         callback();
                     }.bind(this)
                 );
+            }
+            else {
+                this.setPhase(phaseDescription);
+                callback();
             }
         }
     },
