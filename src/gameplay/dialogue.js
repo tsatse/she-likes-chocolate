@@ -52,7 +52,7 @@ Dialogue.prototype = {
         if(this._currentLine !== null) {
             var currentLine = this.lines[this._currentLine];
             var ctx = this.host.ctx;
-            var position = this.defaultPositions[currentLine.who];
+            var position = this.defaultProperties[currentLine.who];
             if(currentLine.position) {
                 position = currentLine.position;
             }
@@ -67,8 +67,8 @@ Dialogue.prototype = {
             ctx.font = 'normal 14pt helvetica';
             var metrics = ctx.measureText(currentLine.text);
             ctx.fillStyle = 'white';
-            if(this.defaultPositions[currentLine.who].color) {
-                ctx.fillStyle = this.defaultPositions[currentLine.who].color;
+            if(this.defaultProperties[currentLine.who].color) {
+                ctx.fillStyle = this.defaultProperties[currentLine.who].color;
             }
             ctx.strokeStyle = 'black';
             ctx.strokeRect(position.x, position.y, metrics.width + 10, 30);

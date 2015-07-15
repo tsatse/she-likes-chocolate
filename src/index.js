@@ -9,7 +9,7 @@ var theGame = new Game(
         phases: {
             firstDialogue: {
                 gameplayType: 'Dialogue',
-                defaultPositions: {
+                defaultProperties: {
                     me: {x: 202, y: 185, color: 'cyan'},
                     her: {x: 125, y: 155, color: 'orange'}
                 },
