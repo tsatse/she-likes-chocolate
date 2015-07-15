@@ -1,32 +1,23 @@
 function Dialogue(host) {
-    this.currentLine = null;
-    this.saveCanvas = document.createElement('canvas');
-    this.saveCanvas.width = host.gameCanvas.width;
-    this.saveCanvas.height = host.gameCanvas.height;
-    var ctx = this.saveCanvas.getContext('2d');
-    ctx.drawImage(
-        host.gameCanvas,
-        0, 0, host.gameCanvas.width, host.gameCanvas.height,
-        0, 0, host.gameCanvas.width, host.gameCanvas.height
-        );
-    host.registerEventHandler('keyup', this.onKeyUp.bind(this));
-    this.goToNextLine();
+    this._currentLine = 0;
 }
 
 Dialogue.prototype = {
-    onKeyUp: function(event) {
-        if(event.keyCode === 32) {
-            this.goToNextLine();
+    eventHandlers: {
+        keyup: function(event) {
+            if(event.keyCode === 32) {
+                this.goToNextLine();
+            }
         }
     },
 
     goToNextLine: function goToNextLine() {
-        if(this.currentLine === null) {
+        if(this._currentLine === null) {
             this.goToLine(0);
         }
         else {
-            if(this.currentLine + 1 < this.lines.length) {
-                this.goToLine(this.currentLine + 1);
+            if(this._currentLine + 1 < this.lines.length) {
+                this.goToLine(this._currentLine + 1);
             }
             else {
                 this.host.gotoSink('end');
@@ -35,12 +26,21 @@ Dialogue.prototype = {
     },
 
     goToLine: function goToLine(lineNumber) {
-        this.currentLine = lineNumber;
+        this._currentLine = lineNumber;
     },
 
     init: function init() {
+        this.saveCanvas = document.createElement('canvas');
+        this.saveCanvas.width = this.host.gameCanvas.width;
+        this.saveCanvas.height = this.host.gameCanvas.height;
+        var ctx = this.saveCanvas.getContext('2d');
+        ctx.drawImage(
+            this.host.gameCanvas,
+            0, 0, this.host.gameCanvas.width, this.host.gameCanvas.height,
+            0, 0, this.host.gameCanvas.width, this.host.gameCanvas.height
+            );
         if(this.restart) {
-            this.currentLine = 0;
+            this._currentLine = 0;
         }
     },
 
@@ -49,8 +49,8 @@ Dialogue.prototype = {
     },
 
     draw: function draw() {
-        if(this.currentLine !== null) {
-            var currentLine = this.lines[this.currentLine];
+        if(this._currentLine !== null) {
+            var currentLine = this.lines[this._currentLine];
             var ctx = this.host.ctx;
             var position = this.defaultPositions[currentLine.who];
             if(currentLine.position) {
