@@ -16,6 +16,7 @@ function Game(canvas, gameStructure) {
     this.phaseInstances = {};
     this.registeredEventHandlers = {};
     this.lastUpdate = null;
+    this.images = {};
     this.keys = keys;
     this.gameCanvas = canvas;
     this.gameCanvas.width = window.innerWidth;
@@ -106,6 +107,28 @@ Game.prototype = {
         }.bind(this), {});
     },
 
+    filterImagesToLoad: function filterImagesToLoad(images) {
+        if(!images) {
+            return {};
+        }
+        return Object.keys(images)
+            .filter(function(imageName) {
+                return !this.images[imageName];
+            }.bind(this))
+            .reduce(function(objectSoFar, imageName) {
+                objectSoFar[imageName] = images[imageName];
+                return objectSoFar;
+            }, {});
+    },
+
+    mergeImages: function mergeImages(images) {
+        var imageName;
+
+        for(imageName in images) {
+            this.images[imageName] = images[imageName];
+        }
+    },
+
     gotoPhase: function gotoPhase(phaseName) {
         var phaseDescription;
         this.changingPhase = true;
@@ -120,13 +143,14 @@ Game.prototype = {
                     throw(new Error('No phase with name ' + phaseName));
                 }
                 phaseDescription = this.getFullDescription(this.phaseName);
-                if(phaseDescription.images) {
-                    return this.loadImages(phaseDescription.images);
+                var imagesToLoad = this.filterImagesToLoad(phaseDescription.images);
+                if(Object.keys(imagesToLoad).length) {
+                    return this.loadImages(imagesToLoad);
                 }
             }.bind(this))
             .then(function(images) {
                 if(images) {
-                    this.images = images;
+                    this.mergeImages(images);
                 }         
                 if(!this.phaseInstances[phaseName]) {
                     this.phaseInstances[phaseName] = new gameplays[phaseDescription.gameplayType](this);
