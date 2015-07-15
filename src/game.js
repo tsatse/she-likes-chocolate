@@ -44,19 +44,6 @@ Game.prototype = {
             }.bind(this));
     },
 
-    setPhase: function setPhase(phaseName, phaseDescription) {
-        if(this.phaseInstances[phaseName]) {
-            return;
-        }
-        this.phaseInstances[phaseName] = new gameplays[phaseDescription.gameplayType](this);
-        this.phaseInstances[phaseName].host = this;
-        for(var propertyName in phaseDescription) {
-            if(['images', 'gameplayType'].indexOf(propertyName) === -1) {
-                this.phaseInstances[phaseName][propertyName] = phaseDescription[propertyName];
-            }
-        }
-    },
-
     gotoSink: function gotoSink(sinkName) {
         return this.gotoPhase(this.gameStructure.plan[this.phaseName][sinkName]);
     },
@@ -75,6 +62,29 @@ Game.prototype = {
         });
     },
 
+    getHierarchy: function getHierarchy(phaseName, children) {
+        if(!children) {
+            children = [];
+        }
+        var currentHierarchy = [phaseName].concat(children);
+        if(this.gameStructure.phases[phaseName].basedOn) {
+            return this.getHierarchy(this.gameStructure.phases[phaseName].basedOn, currentHierarchy);
+        }
+        else {
+            return currentHierarchy;
+        }
+    },
+
+    getFullDescription: function getFullDescription(phaseName) {
+        var hierarchy = this.getHierarchy(phaseName);
+        return hierarchy.reduce(function(phaseSoFar, currentPhaseName) {
+            for(var propertyName in this.gameStructure.phases[currentPhaseName]) {
+                phaseSoFar[propertyName] = this.gameStructure.phases[currentPhaseName][propertyName];
+            }
+            return phaseSoFar;
+        }.bind(this), {});
+    },
+
     gotoPhase: function gotoPhase(phaseName) {
         var phaseDescription;
 
@@ -84,7 +94,7 @@ Game.prototype = {
                 if(!this.gameStructure.phases[this.phaseName]) {
                     throw(new Error('No phase with name ' + phaseName));
                 }
-                phaseDescription = this.gameStructure.phases[this.phaseName];
+                phaseDescription = this.getFullDescription(this.phaseName);
                 if(phaseDescription.images) {
                     return this.loadImages(phaseDescription.images);
                 }
@@ -92,9 +102,23 @@ Game.prototype = {
             .then(function(images) {
                 if(images) {
                     this.images = images;
-                }                
-                return this.setPhase(this.phaseName, phaseDescription);
-            }.bind(this));
+                }         
+                if(!this.phaseInstances[phaseName]) {
+                    this.phaseInstances[phaseName] = new gameplays[phaseDescription.gameplayType](this);
+                    this.phaseInstances[phaseName].host = this;
+                    for(var propertyName in phaseDescription) {
+                        if(['images', 'gameplayType'].indexOf(propertyName) === -1) {
+                            this.phaseInstances[phaseName][propertyName] = phaseDescription[propertyName];
+                        }
+                    }
+                }
+                if(this.phaseInstances[phaseName].init) {
+                    this.phaseInstances[phaseName].init();
+                }
+            }.bind(this))
+            .catch(function(error) {
+                console.error(error);
+            });
     },
 
     loop: function loop(time) {
