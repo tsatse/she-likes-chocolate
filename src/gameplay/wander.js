@@ -77,16 +77,16 @@ Wander.prototype = {
         this.host.ctx.drawImage(
             this.host.images.sky,
             0, 0,
-            this.host.gameCanvas.width, this.host.gameCanvas.height,
+            this.host.images.sky.width, this.host.images.sky.height,
             0, 0,
-            this.host.gameCanvas.width, this.host.gameCanvas.height
+            this.host.images.sky.width, this.host.images.sky.height
             );
         this.host.ctx.drawImage(
             this.host.images.houses,
             Math.min(mapOffset.x, this.mapWidth - this.host.gameCanvas.width), mapOffset.y,
-            this.host.gameCanvas.width, this.host.gameCanvas.height,
+            this.host.images.houses.width, this.host.images.houses.height,
             0, 0,
-            this.host.gameCanvas.width, this.host.gameCanvas.height
+            this.host.images.houses.width, this.host.images.houses.height
             );
     },
 
@@ -95,9 +95,9 @@ Wander.prototype = {
         this.host.ctx.drawImage(
             this.host.images.foreground,
             (mapOffset.x * 1.5) % this.host.images.foreground.width, mapOffset.y,
-            this.host.gameCanvas.width, this.host.gameCanvas.height,
+            this.host.images.foreground.width, this.host.images.foreground.height,
             0, 0,
-            this.host.gameCanvas.width, this.host.gameCanvas.height
+            this.host.images.foreground.width, this.host.images.foreground.height
             );
     },
 
