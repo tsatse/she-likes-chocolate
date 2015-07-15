@@ -44,6 +44,27 @@ var theGame = new Game(
                     }
                 ]
             },
+
+            secondDialogue: {
+                gameplayType: 'Dialogue',
+                basedOn: 'firstDialogue',
+                restart: true,
+                lines: [
+                    {
+                        who: 'me',
+                        text: "Hey, I'm almost done !"
+                    },
+                    {
+                        who: 'her',
+                        text: 'great'
+                    },
+                    {
+                        who: 'me',
+                        text: "Well I'd better get going then"
+                    }
+                ]
+             },
+
             goingForChoco: {
                 gameplayType: 'Wander',
                 mapWidth: 2400,
@@ -99,13 +120,18 @@ var theGame = new Game(
                     meSpriteIdle:
                         'art/me_sprite_idle.png'
                 }
+            },
+            intro: {
+                basedOn: 'goingForChoco'
             }
         },
         plan: {
             firstDialogue: {end: 'goingForChoco'},
-            goingForChoco: {talkToHer: 'firstDialogue'}
+            secondDialogue: {end: 'goingForChoco'},
+            goingForChoco: {talkToHer: 'secondDialogue'},
+            intro: {talkToHer: 'firstDialogue'}
         },
-        entry: 'goingForChoco'
+        entry: 'intro'
     }
 );
 

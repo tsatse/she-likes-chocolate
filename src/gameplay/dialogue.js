@@ -38,6 +38,12 @@ Dialogue.prototype = {
         this.currentLine = lineNumber;
     },
 
+    init: function init() {
+        if(this.restart) {
+            this.currentLine = 0;
+        }
+    },
+
     update: function update() {
 
     },
