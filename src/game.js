@@ -150,15 +150,14 @@ Game.prototype = {
     },
 
     loop: function loop(time) {
-        if(this.changingPhase) {
-            return;
-        }
-        if(!this.lastUpdate) {
+        if(!this.changingPhase) {
+            if(!this.lastUpdate) {
+                this.lastUpdate = time;
+            }
+            this.phaseInstances[this.phaseName].update(time);
             this.lastUpdate = time;
+            this.phaseInstances[this.phaseName].draw(time);
         }
-        this.phaseInstances[this.phaseName].update(time);
-        this.lastUpdate = time;
-        this.phaseInstances[this.phaseName].draw(time);
 
         requestAnimationFrame(this.loop.bind(this));
     }
