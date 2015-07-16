@@ -23,6 +23,7 @@ function Game(canvas, gameStructure) {
     this.gameCanvas.height = window.innerHeight;
     this.ctx = this.gameCanvas.getContext('2d');
     document.addEventListener('keydown', function(event) {
+            event.preventDefault();
             this.keys[event.keyCode] = true;
             if(this.registeredEventHandlers.keydown) {
                 this.registeredEventHandlers.keydown(event);
@@ -30,6 +31,7 @@ function Game(canvas, gameStructure) {
         }.bind(this), false);
 
     document.addEventListener('keyup', function(event) {
+            event.preventDefault();
             this.keys[event.keyCode] = false;
             if(this.registeredEventHandlers.keyup) {
                 this.registeredEventHandlers.keyup(event);
@@ -100,8 +102,14 @@ Game.prototype = {
     getFullDescription: function getFullDescription(phaseName) {
         var hierarchy = this.getHierarchy(phaseName);
         return hierarchy.reduce(function(phaseSoFar, currentPhaseName) {
-            for(var propertyName in this.gameStructure.phases[currentPhaseName]) {
-                phaseSoFar[propertyName] = this.gameStructure.phases[currentPhaseName][propertyName];
+            var currentDescription = this.gameStructure.phases[currentPhaseName];
+            for(var propertyName in currentDescription) {
+                if(phaseSoFar[propertyName] && !(currentDescription.noInherit && currentDescription.noInherit[propertyName])) {
+                    phaseSoFar[propertyName] = Utils.deepMerge(phaseSoFar[propertyName], currentDescription[propertyName]);
+                }
+                else {
+                    phaseSoFar[propertyName] = currentDescription[propertyName];
+                }
             }
             return phaseSoFar;
         }.bind(this), {});
@@ -178,9 +186,16 @@ Game.prototype = {
             if(!this.lastUpdate) {
                 this.lastUpdate = time;
             }
-            this.phaseInstances[this.phaseName].update(time);
-            this.lastUpdate = time;
-            this.phaseInstances[this.phaseName].draw(time);
+            if(this.phaseInstances[this.phaseName].update(time)) {
+                this.lastUpdate = time;
+            }
+
+            if(!this.lastDraw) {
+                this.lastDraw = time;
+            }
+            if(this.phaseInstances[this.phaseName].draw(time)) {
+                this.lastDraw = time;
+            }
         }
 
         requestAnimationFrame(this.loop.bind(this));

@@ -4,6 +4,9 @@ body {
     padding: 0;
 }
 
-#game_canvas {
+canvas {
     border: 1px solid #fff;
+    position: absolute;
+    top: 50%;
+    margin-top: -225px;
 }

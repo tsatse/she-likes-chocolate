@@ -1,5 +1,4 @@
-﻿var Utils = require('./utils');
-var Character = require('./character');
+﻿var Utils = require('utils');
 var Game = require('./game');
 
 
@@ -48,6 +47,7 @@ var theGame = new Game(
             secondDialogue: {
                 gameplayType: 'Dialogue',
                 basedOn: 'firstDialogue',
+                noInherit: {'lines': true},
                 restart: true,
                 lines: [
                     {
@@ -65,7 +65,7 @@ var theGame = new Game(
                 ]
              },
 
-            goingForChoco: {
+            intro: {
                 gameplayType: 'Wander',
                 mapWidth: 2400,
                 minX: 200,
@@ -73,36 +73,34 @@ var theGame = new Game(
                 minY: 150,
                 maxY: 280,
                 characters: {
-                    her: new Character({
+                    her: {
+                        sprites: {
                             idle: 'herSprite',
                             walkLeft: 'herSprite',
                             walkRight: 'herSprite',
                         },
-                        {
+                        properties: {
                             width: 90,
-                            height: 150
-                        },
-                        {
+                            height: 150,
                             x: 125,
                             y: 155
                         }
-                    ),
-                    me: new Character({
+                    },
+                    me: {
+                        sprites: {
                             idle: 'meSpriteIdle',
                             walkLeft: 'meSprite',
                             walkRight: 'meSpriteRight',
                             walkUp: 'meSpriteIdle',
                             walkDown: 'meSpriteIdle'
                         },
-                        {
+                        properties: {
                             width: 90,
-                            height: 150
-                        },
-                        {
+                            height: 150,
                             x: 202,
                             y: 185
                         }
-                    )
+                    }
                 },
                 images: {
                     sky:
@@ -121,15 +119,32 @@ var theGame = new Game(
                         'art/me_sprite_idle.png'
                 }
             },
-            intro: {
-                basedOn: 'goingForChoco'
+            goingForChoco: {
+                basedOn: 'intro',
+                characters: {
+                    jack: {
+                        sprites: {
+                            idle: 'meSpriteIdle',
+                            walkLeft: 'meSprite',
+                            walkRight: 'meSpriteRight',
+                            walkUp: 'meSpriteIdle',
+                            walkDown: 'meSpriteIdle'
+                        },
+                        properties: {
+                            width: 90,
+                            height: 150,
+                            x: 802,
+                            y: 185
+                        }
+                    }
+                }
             }
         },
         plan: {
+            intro: {talkToHer: 'firstDialogue'},
             firstDialogue: {end: 'goingForChoco'},
-            secondDialogue: {end: 'goingForChoco'},
             goingForChoco: {talkToHer: 'secondDialogue'},
-            intro: {talkToHer: 'firstDialogue'}
+            secondDialogue: {end: 'goingForChoco'},
         },
         entry: 'intro'
     }
