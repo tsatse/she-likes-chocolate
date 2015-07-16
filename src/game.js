@@ -23,6 +23,7 @@ function Game(canvas, gameStructure) {
     this.gameCanvas.height = window.innerHeight;
     this.ctx = this.gameCanvas.getContext('2d');
     document.addEventListener('keydown', function(event) {
+            event.preventDefault();
             this.keys[event.keyCode] = true;
             if(this.registeredEventHandlers.keydown) {
                 this.registeredEventHandlers.keydown(event);
@@ -30,6 +31,7 @@ function Game(canvas, gameStructure) {
         }.bind(this), false);
 
     document.addEventListener('keyup', function(event) {
+            event.preventDefault();
             this.keys[event.keyCode] = false;
             if(this.registeredEventHandlers.keyup) {
                 this.registeredEventHandlers.keyup(event);
