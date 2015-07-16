@@ -10,7 +10,7 @@ Wander.prototype = {
         var characterDescription;
         for(var characterName in this.characters) {
             characterDescription = this.characters[characterName];
-            this._characters[characterName] = new Character(characterDescription.sprites, characterDescription.size, characterDescription.position);
+            this._characters[characterName] = new Character(characterDescription.sprites, characterDescription.properties);
         }
     },
 

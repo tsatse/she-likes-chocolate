@@ -79,11 +79,9 @@ var theGame = new Game(
                             walkLeft: 'herSprite',
                             walkRight: 'herSprite',
                         },
-                        size: {
+                        properties: {
                             width: 90,
-                            height: 150
-                        },
-                        position: {
+                            height: 150,
                             x: 125,
                             y: 155
                         }
@@ -96,11 +94,9 @@ var theGame = new Game(
                             walkUp: 'meSpriteIdle',
                             walkDown: 'meSpriteIdle'
                         },
-                        size: {
+                        properties: {
                             width: 90,
-                            height: 150
-                        },
-                        position: {
+                            height: 150,
                             x: 202,
                             y: 185
                         }
@@ -134,11 +130,9 @@ var theGame = new Game(
                             walkUp: 'meSpriteIdle',
                             walkDown: 'meSpriteIdle'
                         },
-                        size: {
+                        properties: {
                             width: 90,
-                            height: 150
-                        },
-                        position: {
+                            height: 150,
                             x: 802,
                             y: 185
                         }
