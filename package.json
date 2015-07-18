@@ -29,6 +29,7 @@
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-open": "^0.2.3",
+    "pngjs": "^0.4.0",
     "rsvp": "^3.0.18",
     "shelljs": "^0.5.1"
   }
