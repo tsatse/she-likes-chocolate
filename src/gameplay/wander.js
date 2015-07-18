@@ -54,6 +54,9 @@ Wander.prototype = {
                 return this._characters[characterName];
             }.bind(this))
             .forEach(function(character) {
+                if(character.behaviour) {
+                    character.behaviour.update();
+                }
                 if(character.dx > 0)
                     { character.setProperty('action', 'walkRight');}
                 else if(character.dx < 0)

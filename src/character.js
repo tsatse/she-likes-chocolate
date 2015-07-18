@@ -1,5 +1,10 @@
-function Character(sprites, properties) {
-    this.init(sprites, properties);    
+var behaviours = {
+    'walker':  require('./walker')
+};
+
+
+function Character(description) {
+    this.init(description);    
 }
 
 Character.prototype = {
@@ -11,6 +16,9 @@ Character.prototype = {
 
         for(var property in description) {
             this.setProperty(property, description[property]);
+        }
+        if(this.behaviour) {
+            this.behaviour = new behaviours[this.behaviour.type](this.behaviour, this);
         }
     },
 

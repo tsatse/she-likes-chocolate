@@ -129,7 +129,15 @@ var theGame = new Game(
                         width: 90,
                         height: 150,
                         x: 802,
-                        y: 185
+                        y: 185,
+                        behaviour: {
+                            type: 'walker',
+                            wayPoints: [
+                                { x: 210, y: 210},
+                                { x: 800, y: 220},
+                                { x: 240, y: 250}
+                            ]
+                        }
                     }
                 }
             }
