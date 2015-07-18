@@ -10,7 +10,7 @@ Wander.prototype = {
         var characterDescription;
         for(var characterName in this.characters) {
             characterDescription = this.characters[characterName];
-            this._characters[characterName] = new Character(characterDescription.sprites, characterDescription.properties);
+            this._characters[characterName] = new Character(characterDescription);
         }
     },
 
@@ -27,17 +27,13 @@ Wander.prototype = {
         if((time - this.lastFrameUpdate) < (1000/12)) {
             return;
         }
-        var characterList = Object.keys(this._characters);
-        for(var i = 0 ; i < characterList.length ; i++) {
-            var character = this._characters[characterList[i]];
-            if(character.x + character.dx > this.minX && character.x + character.dx < this.maxX) {
-                character.x += character.dx;
-            }
-            if(character.y + character.dy > this.minY && character.y + character.dy < this.maxY) {
-                character.y += character.dy;
-            }
-            character.phase = (character.phase + 1) % (this.host.images[character.sprites[character.action]].width / character.width);
-        }
+        Object.keys(this._characters)
+            .map(function(characterName) {
+                return this._characters[characterName];
+            }.bind(this))
+            .forEach(function(character) {
+                character.phase = (character.phase + 1) % (this.host.images[character.sprites[character.action]].width / character.width);
+            }.bind(this));
         this.lastFrameUpdate = time;
     },
 
@@ -50,19 +46,31 @@ Wander.prototype = {
         if(this.host.keys[38]) { this._characters.me.dy -= unit;}
         if(this.host.keys[40]) { this._characters.me.dy += unit;}
 
-        if(this._characters.me.dx > 0)
-            { this._characters.me.setProperty('action', 'walkRight');}
-        else if(this._characters.me.dx < 0)
-            { this._characters.me.setProperty('action', 'walkLeft');}
-        else if(this._characters.me.dy > 0)
-            { this._characters.me.setProperty('action', 'walkUp');}
-        else if(this._characters.me.dy < 0)
-            { this._characters.me.setProperty('action', 'walkDown');}
-        else
-            { this._characters.me.setProperty('action', 'idle'); }
         if(this._characters.me.x === 202 && this._characters.me.action === 'walkLeft') {
             this.host.gotoSink('talkToHer');
         }
+        Object.keys(this._characters)
+            .map(function(characterName) {
+                return this._characters[characterName];
+            }.bind(this))
+            .forEach(function(character) {
+                if(character.dx > 0)
+                    { character.setProperty('action', 'walkRight');}
+                else if(character.dx < 0)
+                    { character.setProperty('action', 'walkLeft');}
+                else if(character.dy > 0)
+                    { character.setProperty('action', 'walkUp');}
+                else if(character.dy < 0)
+                    { character.setProperty('action', 'walkDown');}
+                else
+                    { this._characters.me.setProperty('action', 'idle'); }
+                if(character.x + character.dx > this.minX && character.x + character.dx < this.maxX) {
+                    character.x += character.dx;
+                }
+                if(character.y + character.dy > this.minY && character.y + character.dy < this.maxY) {
+                    character.y += character.dy;
+                }
+            }.bind(this));
     },
 
     drawCharacter: function drawCharacter(characterName) {

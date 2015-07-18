@@ -3,15 +3,14 @@ function Character(sprites, properties) {
 }
 
 Character.prototype = {
-    init: function init(sprites, properties) {
+    init: function init(description) {
         this.action = 'idle';
         this.phase = 0;
         this.dx = 0;
         this.dy = 0;
 
-        this.sprites = sprites;
-        for(var property in properties) {
-            this.setProperty(property, properties[property]);
+        for(var property in description) {
+            this.setProperty(property, description[property]);
         }
     },
 

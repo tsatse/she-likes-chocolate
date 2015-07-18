@@ -79,12 +79,10 @@ var theGame = new Game(
                             walkLeft: 'herSprite',
                             walkRight: 'herSprite',
                         },
-                        properties: {
-                            width: 90,
-                            height: 150,
-                            x: 125,
-                            y: 155
-                        }
+                        width: 90,
+                        height: 150,
+                        x: 125,
+                        y: 155
                     },
                     me: {
                         sprites: {
@@ -94,12 +92,10 @@ var theGame = new Game(
                             walkUp: 'meSpriteIdle',
                             walkDown: 'meSpriteIdle'
                         },
-                        properties: {
-                            width: 90,
-                            height: 150,
-                            x: 202,
-                            y: 185
-                        }
+                        width: 90,
+                        height: 150,
+                        x: 202,
+                        y: 185
                     }
                 },
                 images: {
@@ -130,12 +126,10 @@ var theGame = new Game(
                             walkUp: 'meSpriteIdle',
                             walkDown: 'meSpriteIdle'
                         },
-                        properties: {
-                            width: 90,
-                            height: 150,
-                            x: 802,
-                            y: 185
-                        }
+                        width: 90,
+                        height: 150,
+                        x: 802,
+                        y: 185
                     }
                 }
             }
