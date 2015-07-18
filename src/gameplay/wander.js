@@ -21,7 +21,10 @@ Wander.prototype = {
     },
 
     updateFrames: function updateFrames(time) {
-        if(((new Date()) - time) < 40) {
+        if(!this.lastFrameUpdate) {
+            this.lastFrameUpdate = time;
+        }
+        if((time - this.lastFrameUpdate) < (1000/12)) {
             return;
         }
         var characterList = Object.keys(this._characters);
@@ -35,6 +38,7 @@ Wander.prototype = {
             }
             character.phase = (character.phase + 1) % (this.host.images[character.sprites[character.action]].width / character.width);
         }
+        this.lastFrameUpdate = time;
     },
 
     updateMovement: function updateMovement(time) {
