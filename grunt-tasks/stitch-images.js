@@ -28,12 +28,21 @@ function transparentize(image) {
     var index;
     var i;
     var j;
+    var colorKey = {
+        r: image.data[0],
+        g: image.data[1],
+        b: image.data[2]
+    };
 
     for(j = 0 ; j < image.height ; j++) {
         for(i = 0 ; i < image.width ; i++) {
             index = (image.width * j + i) << 2;
             makeTransparent = false;
-            if(image.data[index + 0] === 255 || image.data[index + 1] === 255 || image.data[index + 2] === 255) {
+            if(
+                image.data[index + 0] === colorKey.r ||
+                image.data[index + 1] === colorKey.g ||
+                image.data[index + 2] === colorKey.b
+            ) {
                 makeTransparent = true;
             }
             if(makeTransparent) {
