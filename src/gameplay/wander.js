@@ -9,8 +9,10 @@ Wander.prototype = {
     init: function() {
         var characterDescription;
         for(var characterName in this.characters) {
-            characterDescription = this.characters[characterName];
-            this._characters[characterName] = new Character(characterDescription);
+            if(!this._characters[characterName]) {
+                characterDescription = this.characters[characterName];
+                this._characters[characterName] = new Character(characterDescription);
+            }
         }
     },
 
@@ -52,31 +54,32 @@ Wander.prototype = {
                 (
                     this._characters.me.x === sink.x &&
                     this._characters.me.y >= sink.y &&
-                    this._characters.me.y = sink.y + sink.height &&
+                    this._characters.me.y <= sink.y + sink.height &&
                     this._characters.me.action === 'walkRight'
                 ) ||
 
                 (
                     this._characters.me.x === sink.x + sink.width &&
                     this._characters.me.y >= sink.y &&
-                    this._characters.me.y = sink.y + sink.height &&
+                    this._characters.me.y <= sink.y + sink.height &&
                     this._characters.me.action === 'walkLeft'
                 ) ||
 
                 (
                     this._characters.me.y === sink.y &&
                     this._characters.me.x >= sink.x &&
-                    this._characters.me.x = sink.x + sink.width &&
+                    this._characters.me.x <= sink.x + sink.width &&
                     this._characters.me.action === 'walkDown'
                 ) ||
 
                 (
                     this._characters.me.y === sink.y + sink.height &&
                     this._characters.me.x >= sink.x &&
-                    this._characters.me.x = sink.x + sink.width &&
+                    this._characters.me.x <= sink.x + sink.width &&
                     this._characters.me.action === 'walkUp'
                 )
             ) {
+                this._characters.me.action = 'idle';
                 this.host.gotoSink(sinkName);
                 return;
             }
