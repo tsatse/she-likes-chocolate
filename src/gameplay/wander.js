@@ -46,9 +46,42 @@ Wander.prototype = {
         if(this.host.keys[38]) { this._characters.me.dy -= unit;}
         if(this.host.keys[40]) { this._characters.me.dy += unit;}
 
-        if(this._characters.me.x === 202 && this._characters.me.action === 'walkLeft') {
-            this.host.gotoSink('talkToHer');
+        for(var sinkName in this.sinks) {
+            var sink = this.sinks[sinkName];
+            if(
+                (
+                    this._characters.me.x === sink.x &&
+                    this._characters.me.y >= sink.y &&
+                    this._characters.me.y = sink.y + sink.height &&
+                    this._characters.me.action === 'walkRight'
+                ) ||
+
+                (
+                    this._characters.me.x === sink.x + sink.width &&
+                    this._characters.me.y >= sink.y &&
+                    this._characters.me.y = sink.y + sink.height &&
+                    this._characters.me.action === 'walkLeft'
+                ) ||
+
+                (
+                    this._characters.me.y === sink.y &&
+                    this._characters.me.x >= sink.x &&
+                    this._characters.me.x = sink.x + sink.width &&
+                    this._characters.me.action === 'walkDown'
+                ) ||
+
+                (
+                    this._characters.me.y === sink.y + sink.height &&
+                    this._characters.me.x >= sink.x &&
+                    this._characters.me.x = sink.x + sink.width &&
+                    this._characters.me.action === 'walkUp'
+                )
+            ) {
+                this.host.gotoSink(sinkName);
+                return;
+            }
         }
+
         Object.keys(this._characters)
             .map(function(characterName) {
                 return this._characters[characterName];

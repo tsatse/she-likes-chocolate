@@ -113,6 +113,14 @@ var theGame = new Game(
                         'art/me_sprite_right.png',
                     meSpriteIdle:
                         'art/me_sprite_idle.png'
+                },
+                sinks: {
+                    talkToHer: {
+                        x: 200,
+                        y: 150,
+                        width: 2,
+                        height: 130
+                    }
                 }
             },
             goingForChoco: {
