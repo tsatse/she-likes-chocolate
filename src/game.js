@@ -12,6 +12,7 @@ var gameplays = {
 
 function Game(canvas, gameStructure) {
     this.phaseName = null;
+    this.characters = {};
     this.gameStructure = gameStructure;
     this.phaseInstances = {};
     this.registeredEventHandlers = {};

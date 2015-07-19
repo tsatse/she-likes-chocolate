@@ -1,17 +1,16 @@
 var Character = require('../character');
 
 
-function Wander() {
-    this._characters = {};
+function Wander(host) {
 }
 
 Wander.prototype = {
     init: function() {
         var characterDescription;
         for(var characterName in this.characters) {
-            if(!this._characters[characterName]) {
+            if(!this.host.characters[characterName]) {
                 characterDescription = this.characters[characterName];
-                this._characters[characterName] = new Character(characterDescription);
+                this.host.characters[characterName] = new Character(characterDescription);
             }
         }
     },
@@ -29,9 +28,9 @@ Wander.prototype = {
         if((time - this.lastFrameUpdate) < (1000/12)) {
             return;
         }
-        Object.keys(this._characters)
+        Object.keys(this.host.characters)
             .map(function(characterName) {
-                return this._characters[characterName];
+                return this.host.characters[characterName];
             }.bind(this))
             .forEach(function(character) {
                 character.phase = (character.phase + 1) % (this.host.images[character.sprites[character.action]].width / character.width);
@@ -41,53 +40,53 @@ Wander.prototype = {
 
     updateMovement: function updateMovement(time) {
         var unit = 2;
-        this._characters.me.dx = 0;
-        this._characters.me.dy = 0;
-        if(this.host.keys[37]) { this._characters.me.dx -= unit;}
-        if(this.host.keys[39]) { this._characters.me.dx += unit;}
-        if(this.host.keys[38]) { this._characters.me.dy -= unit;}
-        if(this.host.keys[40]) { this._characters.me.dy += unit;}
+        this.host.characters.me.dx = 0;
+        this.host.characters.me.dy = 0;
+        if(this.host.keys[37]) { this.host.characters.me.dx -= unit;}
+        if(this.host.keys[39]) { this.host.characters.me.dx += unit;}
+        if(this.host.keys[38]) { this.host.characters.me.dy -= unit;}
+        if(this.host.keys[40]) { this.host.characters.me.dy += unit;}
 
         for(var sinkName in this.sinks) {
             var sink = this.sinks[sinkName];
             if(
                 (
-                    this._characters.me.x === sink.x &&
-                    this._characters.me.y >= sink.y &&
-                    this._characters.me.y <= sink.y + sink.height &&
-                    this._characters.me.action === 'walkRight'
+                    this.host.characters.me.x === sink.x &&
+                    this.host.characters.me.y >= sink.y &&
+                    this.host.characters.me.y <= sink.y + sink.height &&
+                    this.host.characters.me.action === 'walkRight'
                 ) ||
 
                 (
-                    this._characters.me.x === sink.x + sink.width &&
-                    this._characters.me.y >= sink.y &&
-                    this._characters.me.y <= sink.y + sink.height &&
-                    this._characters.me.action === 'walkLeft'
+                    this.host.characters.me.x === sink.x + sink.width &&
+                    this.host.characters.me.y >= sink.y &&
+                    this.host.characters.me.y <= sink.y + sink.height &&
+                    this.host.characters.me.action === 'walkLeft'
                 ) ||
 
                 (
-                    this._characters.me.y === sink.y &&
-                    this._characters.me.x >= sink.x &&
-                    this._characters.me.x <= sink.x + sink.width &&
-                    this._characters.me.action === 'walkDown'
+                    this.host.characters.me.y === sink.y &&
+                    this.host.characters.me.x >= sink.x &&
+                    this.host.characters.me.x <= sink.x + sink.width &&
+                    this.host.characters.me.action === 'walkDown'
                 ) ||
 
                 (
-                    this._characters.me.y === sink.y + sink.height &&
-                    this._characters.me.x >= sink.x &&
-                    this._characters.me.x <= sink.x + sink.width &&
-                    this._characters.me.action === 'walkUp'
+                    this.host.characters.me.y === sink.y + sink.height &&
+                    this.host.characters.me.x >= sink.x &&
+                    this.host.characters.me.x <= sink.x + sink.width &&
+                    this.host.characters.me.action === 'walkUp'
                 )
             ) {
-                this._characters.me.action = 'idle';
+                this.host.characters.me.action = 'idle';
                 this.host.gotoSink(sinkName);
                 return;
             }
         }
 
-        Object.keys(this._characters)
+        Object.keys(this.host.characters)
             .map(function(characterName) {
-                return this._characters[characterName];
+                return this.host.characters[characterName];
             }.bind(this))
             .forEach(function(character) {
                 if(character.behaviour) {
@@ -102,7 +101,7 @@ Wander.prototype = {
                 else if(character.dy < 0)
                     { character.setProperty('action', 'walkDown');}
                 else
-                    { this._characters.me.setProperty('action', 'idle'); }
+                    { this.host.characters.me.setProperty('action', 'idle'); }
                 if(character.x + character.dx > this.minX && character.x + character.dx < this.maxX) {
                     character.x += character.dx;
                 }
@@ -113,11 +112,11 @@ Wander.prototype = {
     },
 
     drawCharacter: function drawCharacter(characterName) {
-        var character = this._characters[characterName];
+        var character = this.host.characters[characterName];
         var image = this.host.images[character.sprites[character.action]];
         var xOffsetInSource = character.phase * character.width;
 
-        var currentMapOffset = this.getMapOffset(this._characters.me.x, this._characters.me.y);
+        var currentMapOffset = this.getMapOffset(this.host.characters.me.x, this.host.characters.me.y);
         this.host.ctx.drawImage(
             image,
             xOffsetInSource, 0,
@@ -166,7 +165,7 @@ Wander.prototype = {
     },
 
     isVisible: function isVisible(characterName) {
-        var character = this._characters[characterName];
+        var character = this.host.characters[characterName];
         var currentMapOffset = this.getMapOffset(character.x, character.y);
         if(
             (character.x - currentMapOffset.x) > 0 &&
@@ -181,17 +180,17 @@ Wander.prototype = {
         if((time - this.host.lastDraw) < 40) {
             return;
         }
-        this.drawMap(this._characters.me.x, this._characters.me.y);
-        var characterList = Object.keys(this._characters);
+        this.drawMap(this.host.characters.me.x, this.host.characters.me.y);
+        var characterList = Object.keys(this.host.characters);
         characterList.sort(function(a, b) {
-            return this._characters[a].y - this._characters[b].y;
+            return this.host.characters[a].y - this.host.characters[b].y;
         }.bind(this));
         for(var i = 0 ; i < characterList.length ; i++) {
             if(this.isVisible(characterList[i])) {
                 this.drawCharacter(characterList[i]);
             }
         }
-        this.drawForeground(this._characters.me.x, this._characters.me.y);
+        this.drawForeground(this.host.characters.me.x, this.host.characters.me.y);
     }
 };
 

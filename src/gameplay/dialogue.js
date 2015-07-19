@@ -42,6 +42,15 @@ Dialogue.prototype = {
         if(this.restart) {
             this._currentLine = 0;
         }
+
+        var involvedCharacters = this.lines.reduce(function(charactersSoFar, line) {
+                charactersSoFar[line.who] = true;
+            }.bind(this),
+            {}
+        );
+        Object.keys(involvedCharacters).forEach(function(characterName) {
+            host.characters[characterName].action = 'talking';
+        }.bind(this));
     },
 
     update: function update() {
