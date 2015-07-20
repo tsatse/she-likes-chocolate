@@ -8,6 +8,9 @@ var theGame = new Game(
         phases: {
             firstDialogue: {
                 gameplayType: 'Dialogue',
+                renderingType: 'PointNClick',
+                basedOn: 'intro',
+                noInherit: {'gameplayType': true, 'renderingType': true},
                 defaultProperties: {
                     me: {x: 202, y: 185, color: 'cyan'},
                     her: {x: 125, y: 155, color: 'orange'}
@@ -45,7 +48,6 @@ var theGame = new Game(
             },
 
             secondDialogue: {
-                gameplayType: 'Dialogue',
                 basedOn: 'firstDialogue',
                 noInherit: {'lines': true},
                 restart: true,
@@ -67,6 +69,7 @@ var theGame = new Game(
 
             intro: {
                 gameplayType: 'Wander',
+                renderingType: 'PointNClick',
                 mapWidth: 2400,
                 minX: 200,
                 maxX: 2350,
@@ -76,6 +79,7 @@ var theGame = new Game(
                     her: {
                         sprites: {
                             idle: 'herSprite',
+                            talking: 'herSprite',
                             walkLeft: 'herSprite',
                             walkRight: 'herSprite',
                         },
@@ -87,6 +91,7 @@ var theGame = new Game(
                     me: {
                         sprites: {
                             idle: 'meSpriteIdle',
+                            talking: 'meSpriteIdle',
                             walkLeft: 'meSprite',
                             walkRight: 'meSpriteRight',
                             walkUp: 'meSpriteIdle',
