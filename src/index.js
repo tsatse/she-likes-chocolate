@@ -93,9 +93,13 @@ var theGame = new Game(
                             idle: 'meSpriteIdle',
                             talking: 'meSpriteIdle',
                             walkLeft: 'meSprite',
+                            runLeft: 'meSprite',
                             walkRight: 'meSpriteRight',
+                            runRight: 'meSpriteRight',
                             walkUp: 'meSpriteIdle',
-                            walkDown: 'meSpriteIdle'
+                            runUp: 'meSpriteIdle',
+                            walkDown: 'meSpriteIdle',
+                            runDown: 'meSpriteIdle'
                         },
                         width: 90,
                         height: 150,

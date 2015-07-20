@@ -32,6 +32,9 @@ function Game(canvas, gameStructure) {
     document.addEventListener('keydown', function(event) {
             event.preventDefault();
             this.keys[event.keyCode] = true;
+            if(event.shiftKey) {
+                this.keys.shift = true;
+            }
             if(this.registeredEventHandlers.keydown) {
                 this.registeredEventHandlers.keydown(event);
             }
@@ -40,6 +43,9 @@ function Game(canvas, gameStructure) {
     document.addEventListener('keyup', function(event) {
             event.preventDefault();
             this.keys[event.keyCode] = false;
+            if(!event.shiftKey) {
+                this.keys.shift = false;
+            }
             if(this.registeredEventHandlers.keyup) {
                 this.registeredEventHandlers.keyup(event);
             }

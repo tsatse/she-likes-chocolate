@@ -24,6 +24,9 @@ Wander.prototype = {
         var unit = 2;
         this.host.characters.me.dx = 0;
         this.host.characters.me.dy = 0;
+        if(this.host.keys.shift) {
+            unit *= 2;
+        }
         if(this.host.keys[37]) { this.host.characters.me.dx -= unit;}
         if(this.host.keys[39]) { this.host.characters.me.dx += unit;}
         if(this.host.keys[38]) { this.host.characters.me.dy -= unit;}
@@ -36,28 +39,28 @@ Wander.prototype = {
                     this.host.characters.me.x === sink.x &&
                     this.host.characters.me.y >= sink.y &&
                     this.host.characters.me.y <= sink.y + sink.height &&
-                    this.host.characters.me.action === 'walkRight'
+                    ['walkRight', 'runRight'].indexOf(this.host.characters.me.action) !== -1
                 ) ||
 
                 (
                     this.host.characters.me.x === sink.x + sink.width &&
                     this.host.characters.me.y >= sink.y &&
                     this.host.characters.me.y <= sink.y + sink.height &&
-                    this.host.characters.me.action === 'walkLeft'
+                    ['walkLeft', 'runLeft'].indexOf(this.host.characters.me.action) !== -1
                 ) ||
 
                 (
                     this.host.characters.me.y === sink.y &&
                     this.host.characters.me.x >= sink.x &&
                     this.host.characters.me.x <= sink.x + sink.width &&
-                    this.host.characters.me.action === 'walkDown'
+                    ['walkDown', 'runDown'].indexOf(this.host.characters.me.action) !== -1
                 ) ||
 
                 (
                     this.host.characters.me.y === sink.y + sink.height &&
                     this.host.characters.me.x >= sink.x &&
                     this.host.characters.me.x <= sink.x + sink.width &&
-                    this.host.characters.me.action === 'walkUp'
+                    ['walkUp', 'runUp'].indexOf(this.host.characters.me.action) !== -1
                 )
             ) {
                 this.host.characters.me.action = 'idle';
@@ -74,12 +77,21 @@ Wander.prototype = {
                 if(character.behaviour) {
                     character.behaviour.update();
                 }
-                if(character.dx > 0)
+
+                if(character.dx > 2)
+                    { character.setProperty('action', 'runRight');}
+                else if(character.dx > 0)
                     { character.setProperty('action', 'walkRight');}
+                else if(character.dx < -2)
+                    { character.setProperty('action', 'runLeft');}
                 else if(character.dx < 0)
                     { character.setProperty('action', 'walkLeft');}
+                else if(character.dy > 2)
+                    { character.setProperty('action', 'runUp');}
                 else if(character.dy > 0)
                     { character.setProperty('action', 'walkUp');}
+                else if(character.dy < -2)
+                    { character.setProperty('action', 'runDown');}
                 else if(character.dy < 0)
                     { character.setProperty('action', 'walkDown');}
                 else
