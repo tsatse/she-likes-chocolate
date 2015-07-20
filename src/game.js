@@ -1,6 +1,7 @@
 var RSVP = require('rsvp');
 
 var Utils = require('utils');
+
 var keys = require('./keys');
 
 
@@ -9,13 +10,19 @@ var gameplays = {
     Wander: require('./gameplay/wander')
 };
 
+var renderers = {
+    PointNClick: require('./renderers/point-n-click')
+};
+
 
 function Game(canvas, gameStructure) {
     this.phaseName = null;
+    this.characters = {};
     this.gameStructure = gameStructure;
     this.phaseInstances = {};
     this.registeredEventHandlers = {};
     this.lastUpdate = null;
+    this.renderer = renderers.PointNClick;
     this.images = {};
     this.keys = keys;
     this.gameCanvas = canvas;
@@ -48,6 +55,10 @@ Game.prototype = {
             .catch(function(error) {
                 console.error(error);
             });
+    },
+
+    getCurrentPhase: function getCurrentPhase() {
+        return this.phaseInstances[this.phaseName];
     },
 
     gotoSink: function gotoSink(sinkName) {
@@ -193,7 +204,7 @@ Game.prototype = {
             if(!this.lastDraw) {
                 this.lastDraw = time;
             }
-            if(this.phaseInstances[this.phaseName].draw(time)) {
+            if(this.renderer(time, this)) {
                 this.lastDraw = time;
             }
         }
