@@ -7,6 +7,4 @@ body {
 canvas {
     border: 1px solid #fff;
     position: absolute;
-    top: 50%;
-    margin-top: -225px;
 }
