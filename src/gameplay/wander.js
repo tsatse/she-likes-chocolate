@@ -29,8 +29,8 @@ Wander.prototype = {
         }
         if(this.host.keys[37]) { this.host.characters.me.dx -= unit;}
         if(this.host.keys[39]) { this.host.characters.me.dx += unit;}
-        if(this.host.keys[38]) { this.host.characters.me.dy -= unit;}
-        if(this.host.keys[40]) { this.host.characters.me.dy += unit;}
+        if(this.host.keys[38]) { this.host.characters.me.dy -= unit / 2;}
+        if(this.host.keys[40]) { this.host.characters.me.dy += unit / 2;}
 
         for(var sinkName in this.sinks) {
             var sink = this.sinks[sinkName];
