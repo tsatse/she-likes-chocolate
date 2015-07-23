@@ -98,7 +98,7 @@ function getMapOffset(x, y, mapWidth) {
 
 function isVisible(character, currentMapOffset) {
     if(
-        (character.x - currentMapOffset.x) > 0 &&
+        (character.x + character.width - currentMapOffset.x) > 0 &&
         (character.x - currentMapOffset.x) < window.innerWidth
     ) {
         return true;
