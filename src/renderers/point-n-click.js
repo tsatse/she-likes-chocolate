@@ -1,62 +1,64 @@
 var lastFrameUpdate = null;
 
-function drawCharacter(ctx, character, mapOffset, images) {
-    var image = images[character.sprites[character.action]];
-    var xOffsetInSource = character.phase * character.width;
 
-    ctx.drawImage(
-        image,
-        xOffsetInSource, 0,
-        character.width, character.height,
-        character.x - mapOffset.x, character.y - mapOffset.y,
-        character.width, character.height
-        );
-}
-
-function getMapOffset(x, y, mapWidth) {
-    var result = {x:0, y:0};
-    if(x > (window.innerWidth / 2)) {
-        result.x = Math.min(x - window.innerWidth / 2, mapWidth - window.innerWidth);
-    }
-    
-    return result;
-}
-
-function drawMap(ctx, mapOffset, images, mapWidth) {
+function drawBackground(ctx, mapOffset, images, mapWidth, renderCoords) {
     ctx.drawImage(
         images.sky,
         0, 0,
         images.sky.width, images.sky.height,
-        0, 0,
-        window.innerWidth, images.sky.height
+        renderCoords.x, renderCoords.y,
+        renderCoords.width, images.sky.height
         );
     ctx.drawImage(
         images.houses,
         Math.min(mapOffset.x, mapWidth - window.innerWidth), mapOffset.y,
         Math.min(window.innerWidth, images.houses.width), images.houses.height,
-        0, 0,
-        Math.min(window.innerWidth, images.houses.width), images.houses.height
+        renderCoords.x, renderCoords.y,
+        Math.min(renderCoords.width, images.houses.width), renderCoords.height
         );
 }
 
-function drawForeground(ctx, mapOffset, foregroundImage) {
+function drawForeground(ctx, mapOffset, foregroundImage, renderCoords) {
     ctx.drawImage(
         foregroundImage,
         ((mapOffset.x * 1.5) % foregroundImage.width) | 0, mapOffset.y,
         Math.min(ctx.canvas.width, foregroundImage.width), foregroundImage.height,
-        0, 0,
+        renderCoords.x, renderCoords.y,
         Math.min(ctx.canvas.width, foregroundImage.width), foregroundImage.height
         );
 }
 
-function isVisible(character, currentMapOffset) {
-    if(
-        (character.x - currentMapOffset.x) > 0 &&
-        (character.x - currentMapOffset.x) < window.innerWidth
-    ) {
-        return true;
+function drawCharacters(host, currentMapOffset, renderCoords) {
+    var characterList = Object.keys(host.characters);
+    characterList.sort(function(a, b) {
+        return host.characters[a].y - host.characters[b].y;
+    }.bind(this));
+    for(var i = 0 ; i < characterList.length ; i++) {
+        var character = host.characters[characterList[i]];
+        if(isVisible(character, currentMapOffset)) {
+            drawCharacter(
+                host.ctx,
+                character,
+                currentMapOffset,
+                host.images,
+                renderCoords
+                );
+        }
     }
-    return false;
+}
+
+function drawCharacter(ctx, character, mapOffset, images, renderCoords) {
+    var image = images[character.sprites[character.action]];
+    var xOffsetInSource = character.phase * character.width;
+
+    var scale = ((character.y - 150) / 4 + 150) / 150;
+    ctx.drawImage(
+        image,
+        xOffsetInSource, 0,
+        character.width, character.height,
+        character.x - mapOffset.x + renderCoords.x, character.y - mapOffset.y + renderCoords.y,
+        character.width * scale, character.height * scale
+        );
 }
 
 function drawDialogue(ctx, currentLine, defaultProperties) {
@@ -85,17 +87,23 @@ function drawDialogue(ctx, currentLine, defaultProperties) {
     ctx.fillText(currentLine.text, position.x + 5, position.y + 5);
 }
 
-function drawCharacters(host, currentMapOffset) {
-    var characterList = Object.keys(host.characters);
-    characterList.sort(function(a, b) {
-        return host.characters[a].y - host.characters[b].y;
-    }.bind(this));
-    for(var i = 0 ; i < characterList.length ; i++) {
-        var character = host.characters[characterList[i]];
-        if(isVisible(character, currentMapOffset)) {
-            drawCharacter(host.ctx, character, currentMapOffset, host.images);
-        }
+function getMapOffset(x, y, mapWidth) {
+    var result = {x:0, y:0};
+    if(x > (window.innerWidth / 2)) {
+        result.x = Math.min(x - window.innerWidth / 2, mapWidth - window.innerWidth);
     }
+    
+    return result;
+}
+
+function isVisible(character, currentMapOffset) {
+    if(
+        (character.x - currentMapOffset.x) > 0 &&
+        (character.x - currentMapOffset.x) < window.innerWidth
+    ) {
+        return true;
+    }
+    return false;
 }
 
 function updateFrames(time, images, characters) {
@@ -115,27 +123,43 @@ function updateFrames(time, images, characters) {
     lastFrameUpdate = time;
 }
 
-
-
 function render(time, host) {
     updateFrames(time, host.images, host.characters);
     if((time - host.lastDraw) < 40) {
         return;
     }
     var currentPhase = host.getCurrentPhase();
+    var renderCoords = {
+        width: currentPhase.renderWidth || window.innerWidth,
+        height: currentPhase.renderHeight || window.innerHeight
+    };
+
+    renderCoords.x = (window.innerWidth - renderCoords.width) / 2;
+    renderCoords.y = (window.innerHeight - renderCoords.height) / 2;
+
     var currentMapOffset = getMapOffset(
         host.characters.me.x,
         host.characters.me.y,
         currentPhase.mapWidth
         );
-    drawMap(
+    drawBackground(
         host.ctx,
         currentMapOffset,
         host.images,
-        currentPhase.mapWidth
+        currentPhase.mapWidth,
+        renderCoords
         );
-    drawCharacters(host, currentMapOffset);
-    drawForeground(host.ctx, currentMapOffset, host.images.foreground);
+    drawCharacters(
+        host,
+        currentMapOffset,
+        renderCoords
+        );
+    drawForeground(
+        host.ctx,
+        currentMapOffset,
+        host.images.foreground,
+        renderCoords
+        );
     if('currentLine' in currentPhase && currentPhase.currentLine !== null) {
         drawDialogue(
             host.ctx,
