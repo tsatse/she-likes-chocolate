@@ -70,11 +70,34 @@ var theGame = new Game(
             intro: {
                 gameplayType: 'Wander',
                 renderingType: 'PointNClick',
+                renderHeight: 450,
                 mapWidth: 2400,
                 minX: 200,
                 maxX: 2350,
                 minY: 150,
                 maxY: 280,
+                walkSurface: [
+                    {
+                        x: 200,
+                        y: 150,
+                        zoom: 1
+                    },
+                    {
+                        x: 200,
+                        y: 280,
+                        zoom: 1.5
+                    },
+                    {
+                        x: 2350,
+                        y: 280,
+                        zoom: 1.5
+                    },
+                    {
+                        x: 2350,
+                        y: 150,
+                        zoom: 1
+                    }
+                ],
                 characters: {
                     her: {
                         sprites: {
@@ -162,7 +185,7 @@ var theGame = new Game(
         plan: {
             intro: {talkToHer: 'firstDialogue'},
             firstDialogue: {end: 'goingForChoco'},
-            goingForChoco: {talkToHer: 'secondDialogue'},
+            goingForChoco: {talkToHer: 'secondDialogue', getAtJoes: 'atJoes'},
             secondDialogue: {end: 'goingForChoco'},
         },
         entry: 'intro'
