@@ -63,7 +63,7 @@ function drawCharacter(ctx, character, mapOffset, images, renderCoords) {
         );
 }
 
-function drawDialogue(ctx, currentLine, defaultProperties) {
+function drawDialogue(ctx, currentLine, defaultProperties, renderCoords) {
     if(currentLine === null) {
         return;
     }
@@ -81,12 +81,25 @@ function drawDialogue(ctx, currentLine, defaultProperties) {
         ctx.fillStyle = defaultProperties[currentLine.who].color;
     }
     ctx.strokeStyle = 'black';
-    ctx.strokeRect(position.x, position.y, metrics.width + 10, 30);
+    ctx.strokeRect(
+        position.x + renderCoords.x,
+        position.y + renderCoords.y,
+        metrics.width + 10, 30
+        );
     ctx.globalAlpha = 0.85;
-    ctx.fillRect(position.x, position.y, metrics.width + 10, 30);
+    ctx.fillRect(
+        position.x + renderCoords.x,
+        position.y + renderCoords.y,
+        metrics.width + 10,
+        30
+        );
     ctx.globalAlpha = 1;
     ctx.fillStyle = 'black';
-    ctx.fillText(currentLine.text, position.x + 5, position.y + 5);
+    ctx.fillText(
+        currentLine.text,
+        position.x + 5 + renderCoords.x,
+        position.y + 5 + renderCoords.y
+        );
 }
 
 function getMapOffset(x, y, mapWidth) {
@@ -166,7 +179,8 @@ function render(time, host) {
         drawDialogue(
             host.ctx,
             currentPhase.lines[currentPhase.currentLine],
-            currentPhase.defaultProperties
+            currentPhase.defaultProperties,
+            renderCoords
             );
     }
 }
