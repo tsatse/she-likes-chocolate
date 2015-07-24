@@ -157,6 +157,7 @@ function render(time, host) {
         host.characters.me.y,
         currentPhase.mapWidth
         );
+    host.ctx.clearRect(0, 0, host.ctx.canvas.width, host.ctx.canvas.height);
     drawBackground(
         host.ctx,
         currentMapOffset,
