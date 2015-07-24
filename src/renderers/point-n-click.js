@@ -55,8 +55,10 @@ function drawCharacter(ctx, character, mapOffset, images, renderCoords) {
     ctx.drawImage(
         image,
         xOffsetInSource, 0,
-        character.width, character.height,
-        character.x - mapOffset.x + renderCoords.x, character.y - mapOffset.y + renderCoords.y,
+        character.width,
+        character.height,
+        character.x - mapOffset.x + renderCoords.x - (character.width * scale - character.width) / 2,
+        character.y - mapOffset.y + renderCoords.y,
         character.width * scale, character.height * scale
         );
 }
