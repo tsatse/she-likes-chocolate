@@ -12,8 +12,8 @@ var theGame = new Game(
                 basedOn: 'intro',
                 noInherit: {'gameplayType': true, 'renderingType': true},
                 defaultProperties: {
-                    me: {x: 202, y: 185, color: 'cyan'},
-                    her: {x: 125, y: 155, color: 'orange'}
+                    me: {x: 202, y: 155, color: 'cyan'},
+                    her: {x: 105, y: 145, color: 'orange'}
                 },
                 lines: [
                     {

@@ -55,13 +55,15 @@ function drawCharacter(ctx, character, mapOffset, images, renderCoords) {
     ctx.drawImage(
         image,
         xOffsetInSource, 0,
-        character.width, character.height,
-        character.x - mapOffset.x + renderCoords.x, character.y - mapOffset.y + renderCoords.y,
+        character.width,
+        character.height,
+        character.x - mapOffset.x + renderCoords.x - (character.width * scale - character.width) / 2,
+        character.y - mapOffset.y + renderCoords.y,
         character.width * scale, character.height * scale
         );
 }
 
-function drawDialogue(ctx, currentLine, defaultProperties) {
+function drawDialogue(ctx, currentLine, defaultProperties, renderCoords) {
     if(currentLine === null) {
         return;
     }
@@ -79,12 +81,25 @@ function drawDialogue(ctx, currentLine, defaultProperties) {
         ctx.fillStyle = defaultProperties[currentLine.who].color;
     }
     ctx.strokeStyle = 'black';
-    ctx.strokeRect(position.x, position.y, metrics.width + 10, 30);
+    ctx.strokeRect(
+        position.x + renderCoords.x,
+        position.y + renderCoords.y,
+        metrics.width + 10, 30
+        );
     ctx.globalAlpha = 0.85;
-    ctx.fillRect(position.x, position.y, metrics.width + 10, 30);
+    ctx.fillRect(
+        position.x + renderCoords.x,
+        position.y + renderCoords.y,
+        metrics.width + 10,
+        30
+        );
     ctx.globalAlpha = 1;
     ctx.fillStyle = 'black';
-    ctx.fillText(currentLine.text, position.x + 5, position.y + 5);
+    ctx.fillText(
+        currentLine.text,
+        position.x + 5 + renderCoords.x,
+        position.y + 5 + renderCoords.y
+        );
 }
 
 function getMapOffset(x, y, mapWidth) {
@@ -142,6 +157,7 @@ function render(time, host) {
         host.characters.me.y,
         currentPhase.mapWidth
         );
+    host.ctx.clearRect(0, 0, host.ctx.canvas.width, host.ctx.canvas.height);
     drawBackground(
         host.ctx,
         currentMapOffset,
@@ -164,7 +180,8 @@ function render(time, host) {
         drawDialogue(
             host.ctx,
             currentPhase.lines[currentPhase.currentLine],
-            currentPhase.defaultProperties
+            currentPhase.defaultProperties,
+            renderCoords
             );
     }
 }
