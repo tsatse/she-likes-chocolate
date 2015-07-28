@@ -1,18 +1,8 @@
-var Character = require('../character');
-
-
 function Wander(host) {
 }
 
 Wander.prototype = {
     init: function() {
-        var characterDescription;
-        for(var characterName in this.characters) {
-            if(!this.host.characters[characterName]) {
-                characterDescription = this.characters[characterName];
-                this.host.characters[characterName] = new Character(characterDescription);
-            }
-        }
     },
 
     update: function update(time) {
