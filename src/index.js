@@ -155,31 +155,10 @@ var theGame = new Game(
                     }
                 }
             },
+
             goingForChoco: {
                 basedOn: 'intro',
-                characters: {
-                    jack: {
-                        sprites: {
-                            idle: 'meSpriteIdle',
-                            walkLeft: 'meSprite',
-                            walkRight: 'meSpriteRight',
-                            walkUp: 'meSpriteIdle',
-                            walkDown: 'meSpriteIdle'
-                        },
-                        width: 90,
-                        height: 150,
-                        x: 802,
-                        y: 185,
-                        behaviour: {
-                            type: 'walker',
-                            wayPoints: [
-                                { x: 210, y: 210},
-                                { x: 800, y: 220},
-                                { x: 240, y: 250}
-                            ]
-                        }
-                    }
-                }
+
             }
         },
         plan: {
@@ -187,8 +166,9 @@ var theGame = new Game(
             firstDialogue: {end: 'goingForChoco'},
             goingForChoco: {talkToHer: 'secondDialogue', getAtJoes: 'atJoes'},
             secondDialogue: {end: 'goingForChoco'},
+            atJoes: {}
         },
-        entry: 'intro'
+        entry: 'firstDialogue'
     }
 );
 
