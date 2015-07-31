@@ -1,8 +1,8 @@
 var RSVP = require('rsvp');
 
 var Utils = require('utils');
-
 var keys = require('./keys');
+var Character = require('./character');
 
 
 var gameplays = {
@@ -187,6 +187,16 @@ Game.prototype = {
                         }
                     }
                 }
+                if(phaseDescription.characters) {
+                    var characterDescription;
+                    for(var characterName in phaseDescription.characters) {
+                        if(!this.characters[characterName]) {
+                            characterDescription = phaseDescription.characters[characterName];
+                            this.characters[characterName] = new Character(characterDescription);
+                        }
+                    }
+                }
+
                 if(this.phaseInstances[phaseName].init) {
                     this.phaseInstances[phaseName].init(phaseName);
                 }
