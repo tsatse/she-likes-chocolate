@@ -17,10 +17,10 @@ Wander.prototype = {
         if(this.host.keys.shift) {
             unit *= 2;
         }
-        if(this.host.keys[37]) { this.host.characters.me.dx -= unit;}
-        if(this.host.keys[39]) { this.host.characters.me.dx += unit;}
-        if(this.host.keys[38]) { this.host.characters.me.dy -= unit / 2;}
-        if(this.host.keys[40]) { this.host.characters.me.dy += unit / 2;}
+        if(this.host.keys[37] || this.host.keys['Q'.charCodeAt()] || this.host.keys['A'.charCodeAt()]) { this.host.characters.me.dx -= unit;}
+        if(this.host.keys[39] || this.host.keys['D'.charCodeAt()]) { this.host.characters.me.dx += unit;}
+        if(this.host.keys[38] || this.host.keys['Z'.charCodeAt()] || this.host.keys['W'.charCodeAt()]) { this.host.characters.me.dy -= unit / 2;}
+        if(this.host.keys[40] || this.host.keys['S'.charCodeAt()]) { this.host.characters.me.dy += unit / 2;}
 
         for(var sinkName in this.sinks) {
             var sink = this.sinks[sinkName];
