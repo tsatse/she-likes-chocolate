@@ -157,9 +157,9 @@
             },
             "sinks": {
                 "talkToHer": {
-                    "x": 200,
+                    "x": 182,
                     "y": 150,
-                    "width": 2,
+                    "width": 20,
                     "height": 130
                 }
             }

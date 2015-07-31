@@ -24,6 +24,7 @@ function Game(canvas, gameStructure) {
     this.lastUpdate = null;
     this.renderer = null;
     this.images = {};
+    this.debug = this.gameStructure.debug;
     this.keys = keys;
     this.gameCanvas = canvas;
     this.gameCanvas.width = window.innerWidth;
@@ -31,6 +32,9 @@ function Game(canvas, gameStructure) {
     this.ctx = this.gameCanvas.getContext('2d');
     document.addEventListener('keydown', function(event) {
             event.preventDefault();
+            if(event.keyCode === 'I'.charCodeAt()) {
+                this.debug = !this.debug;
+            }
             this.keys[event.keyCode] = true;
             if(event.shiftKey) {
                 this.keys.shift = true;

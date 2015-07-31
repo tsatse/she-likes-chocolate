@@ -99,6 +99,52 @@ function drawDialogue(ctx, currentLine, defaultProperties, renderCoords) {
         );
 }
 
+function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
+    var sink;
+    var character;
+    var x;
+    var y;
+    var walkSurface = phase.walkSurface;
+
+    for(var sinkName in phase.sinks) {
+        sink = phase.sinks[sinkName];
+        x = sink.x + renderCoords.x - mapOffset.x;
+        y = sink.y + renderCoords.y - mapOffset.y;
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        ctx.fillRect(x, y, sink.width, sink.height);
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.fillText(sinkName, x + 1, y + 1);
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.fillText(sinkName, x - 1, y - 1);
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.fillText(sinkName, x, y);
+    }
+
+    for(var characterName in characters) {
+        character = characters[characterName];
+        ctx.strokeStyle = 'rgb(0, 255, 0)';
+        ctx.strokeRect(
+            renderCoords.x + character.x - mapOffset.x,
+            renderCoords.y + character.y - mapOffset.y,
+            character.width, character.height
+            );
+    }
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
+    ctx.moveTo(
+        renderCoords.x + walkSurface[0].x - mapOffset.x,
+        renderCoords.y + walkSurface[0].y - mapOffset.y
+        );
+
+    walkSurface.slice(1).forEach(function(point) {
+        ctx.lineTo(
+            renderCoords.x + point.x - mapOffset.x,
+            renderCoords.y + point.y - mapOffset.y
+            );
+    });
+    ctx.fill();
+}
+
 function getMapOffset(x, y, mapWidth) {
     var result = {x:0, y:0};
     if(x > (window.innerWidth / 2)) {
@@ -194,6 +240,10 @@ function render(time, host) {
             currentPhase.defaultProperties,
             renderCoords
             );
+    }
+
+    if(host.debug) {
+        drawDebug(host.ctx, currentPhase, renderCoords, host.characters, currentMapOffset);
     }
 }
 
