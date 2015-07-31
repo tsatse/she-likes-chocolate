@@ -22,7 +22,7 @@ function Game(canvas, gameStructure) {
     this.phaseInstances = {};
     this.registeredEventHandlers = {};
     this.lastUpdate = null;
-    this.renderer = renderers.PointNClick;
+    this.renderer = null;
     this.images = {};
     this.keys = keys;
     this.gameCanvas = canvas;
@@ -201,6 +201,7 @@ Game.prototype = {
                     this.phaseInstances[phaseName].init(phaseName);
                 }
                 this.registerEventHandlers(this.phaseInstances[this.phaseName]);
+                this.renderer = renderers[this.phaseInstances[this.phaseName].rendering.type];
                 this.changingPhase = false;
             }.bind(this))
             .catch(function(error) {
@@ -209,7 +210,7 @@ Game.prototype = {
     },
 
     loop: function loop(time) {
-        if(!this.changingPhase) {
+        if(!this.changingPhase && this.renderer) {
             if(!this.lastUpdate) {
                 this.lastUpdate = time;
             }

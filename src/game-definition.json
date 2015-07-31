@@ -62,7 +62,23 @@
 
         "intro": {
             "gameplayType": "Wander",
-            "renderingType": "PointNClick",
+            "rendering": {
+                "type": "PointNClick",
+                "planes": [
+                    {
+                        "image": "sky",
+                        "z": 0
+                    },
+                    {
+                        "image": "houses",
+                        "z": 1
+                    },
+                    {
+                        "image": "foreground",
+                        "z": 1.5
+                    }
+                ]
+            },
             "renderHeight": 450,
             "mapWidth": 2400,
             "minX": 200,
