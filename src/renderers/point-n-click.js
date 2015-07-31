@@ -38,14 +38,15 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
                 character,
                 currentMapOffset,
                 host.images,
-                renderCoords
+                renderCoords,
+                host.gameStructure.sprites[character.sprites]
                 );
         }
     }
 }
 
-function drawCharacter(ctx, character, mapOffset, images, renderCoords) {
-    var image = images[character.sprites[character.action]];
+function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites) {
+    var image = images[sprites[character.action]];
     var xOffsetInSource = character.phase * character.width;
 
     var scale = ((character.y - 150) / 4 + 150) / 150;
@@ -164,7 +165,7 @@ function isVisible(character, currentMapOffset) {
     return false;
 }
 
-function updateFrames(time, images, characters) {
+function updateFrames(time, images, characters, sprites) {
     if(!lastFrameUpdate) {
         lastFrameUpdate = time;
     }
@@ -176,13 +177,13 @@ function updateFrames(time, images, characters) {
             return characters[characterName];
         }.bind(this))
         .forEach(function(character) {
-            character.phase = (character.phase + 1) % (images[character.sprites[character.action]].width / character.width);
+            character.phase = (character.phase + 1) % (images[sprites[character.sprites][character.action]].width / character.width);
         }.bind(this));
     lastFrameUpdate = time;
 }
 
 function render(time, host) {
-    updateFrames(time, host.images, host.characters);
+    updateFrames(time, host.images, host.characters, host.gameStructure.sprites);
     if((time - host.lastDraw) < 40) {
         return;
     }

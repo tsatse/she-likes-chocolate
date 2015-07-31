@@ -109,51 +109,19 @@
             ],
             "characters": {
                 "her": {
-                    "sprites": {
-                        "idle": "herSprite",
-                        "talking": "herSprite",
-                        "walkLeft": "herSprite",
-                        "walkRight": "herSprite"
-                    },
+                    "sprites": "herDay",
                     "width": 90,
                     "height": 150,
                     "x": 125,
                     "y": 155
                 },
                 "me": {
-                    "sprites": {
-                        "idle": "meSpriteIdle",
-                        "talking": "meSpriteIdle",
-                        "walkLeft": "meSprite",
-                        "runLeft": "meSprite",
-                        "walkRight": "meSpriteRight",
-                        "runRight": "meSpriteRight",
-                        "walkUp": "meSpriteIdle",
-                        "runUp": "meSpriteIdle",
-                        "walkDown": "meSpriteIdle",
-                        "runDown": "meSpriteIdle"
-                    },
+                    "sprites": "meDay",
                     "width": 90,
                     "height": 150,
-                    "x": 202,
+                    "x": 203,
                     "y": 185
                 }
-            },
-            "images": {
-                "sky":
-                    "art/sky.png",
-                "foreground":
-                    "art/foreground.png",
-                "houses":
-                    "art/houses.png",
-                "herSprite":
-                    "art/her_sprite.png",
-                "meSprite":
-                    "art/me_sprite.png",
-                "meSpriteRight":
-                    "art/me_sprite_right.png",
-                "meSpriteIdle":
-                    "art/me_sprite_idle.png"
             },
             "sinks": {
                 "talkToHer": {
@@ -166,7 +134,69 @@
         },
 
         "goingForChoco": {
-            "basedOn": "intro"
+            "basedOn": "intro",
+            "sinks": {
+                "getAtJoes": {
+                    "x": 400,
+                    "y": 215,
+                    "width": 50,
+                    "height": 50
+                }
+            }
+        },
+
+        "atJoes": {
+            "gameplayType": "Wander",
+            "renderHeight": 450,
+            "mapWidth": 2400,
+            "minX": 200,
+            "maxX": 2350,
+            "minY": 150,
+            "maxY": 280,
+            "rendering": {
+                "type": "PointNClick",
+                "planes": [
+                    {
+                        "image": "sky",
+                        "z": 0
+                    },
+                    {
+                        "image": "foreground",
+                        "z": 1.5
+                    }
+                ]
+            },
+            "characters": {
+                "me": {
+                    "sprites": "meDay",
+                    "width": 90,
+                    "height": 150,
+                    "x": 203,
+                    "y": 185
+                }
+            },
+            "walkSurface": [
+                {
+                    "x": 200,
+                    "y": 150,
+                    "zoom": 1
+                },
+                {
+                    "x": 200,
+                    "y": 280,
+                    "zoom": 1.5
+                },
+                {
+                    "x": 2350,
+                    "y": 280,
+                    "zoom": 1.5
+                },
+                {
+                    "x": 2350,
+                    "y": 150,
+                    "zoom": 1
+                }
+            ]
         }
     },
     "plan": {
@@ -176,5 +206,41 @@
         "secondDialogue": {"end": "goingForChoco"},
         "atJoes": {}
     },
-    "entry": "firstDialogue"
+    "sprites": {
+        "meDay": {
+            "idle": "meSpriteIdle",
+            "talking": "meSpriteIdle",
+            "walkLeft": "meSprite",
+            "runLeft": "meSprite",
+            "walkRight": "meSpriteRight",
+            "runRight": "meSpriteRight",
+            "walkUp": "meSpriteIdle",
+            "runUp": "meSpriteIdle",
+            "walkDown": "meSpriteIdle",
+            "runDown": "meSpriteIdle"
+        },
+        "herDay": {
+            "idle": "herSprite",
+            "talking": "herSprite",
+            "walkLeft": "herSprite",
+            "walkRight": "herSprite"
+        }
+    },
+    "paths": {
+        "sky":
+            "art/sky.png",
+        "foreground":
+            "art/foreground.png",
+        "houses":
+            "art/houses.png",
+        "herSprite":
+            "art/her_sprite.png",
+        "meSprite":
+            "art/me_sprite.png",
+        "meSpriteRight":
+            "art/me_sprite_right.png",
+        "meSpriteIdle":
+            "art/me_sprite_idle.png"
+    },
+    "entry": "intro"
 }

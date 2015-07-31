@@ -136,18 +136,27 @@ Game.prototype = {
         }.bind(this), {});
     },
 
-    filterImagesToLoad: function filterImagesToLoad(images) {
-        if(!images) {
-            return {};
+    filterImagesToLoad: function filterImagesToLoad(phase) {
+        var imagesToLoad = {};
+        var imageName;
+        var characterName;
+
+        phase.rendering.planes.forEach(function(plane){
+            if(!this.images[plane.image]) {
+                imagesToLoad[plane.image] = this.gameStructure.paths[plane.image];
+            }
+        }.bind(this));
+
+        for(characterName in phase.characters) {
+            for(var stateName in this.gameStructure.sprites[phase.characters[characterName].sprites]) {
+                imageName = this.gameStructure.sprites[phase.characters[characterName].sprites][stateName];
+                if(!this.images[imageName]) {
+                    imagesToLoad[imageName] =  this.gameStructure.paths[imageName];
+                }
+            }
         }
-        return Object.keys(images)
-            .filter(function(imageName) {
-                return !this.images[imageName];
-            }.bind(this))
-            .reduce(function(objectSoFar, imageName) {
-                objectSoFar[imageName] = images[imageName];
-                return objectSoFar;
-            }, {});
+
+        return imagesToLoad;
     },
 
     mergeImages: function mergeImages(images) {
@@ -172,7 +181,7 @@ Game.prototype = {
                     throw(new Error('No phase with name ' + phaseName));
                 }
                 phaseDescription = this.getFullDescription(this.phaseName);
-                var imagesToLoad = this.filterImagesToLoad(phaseDescription.images);
+                var imagesToLoad = this.filterImagesToLoad(phaseDescription);
                 if(Object.keys(imagesToLoad).length) {
                     return this.loadImages(imagesToLoad);
                 }
