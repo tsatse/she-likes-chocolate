@@ -31,7 +31,7 @@ function Game(canvas, gameStructure) {
     this.gameCanvas.height = window.innerHeight;
     this.ctx = this.gameCanvas.getContext('2d');
     document.addEventListener('keydown', function(event) {
-            event.preventDefault();
+            //event.preventDefault();
             if(event.keyCode === 'I'.charCodeAt()) {
                 this.debug = !this.debug;
             }
