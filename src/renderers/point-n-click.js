@@ -1,31 +1,28 @@
 var lastFrameUpdate = null;
 
 
-function drawBackground(ctx, mapOffset, images, mapWidth, renderCoords) {
-    ctx.drawImage(
-        images.sky,
-        0, 0,
-        images.sky.width, images.sky.height,
-        renderCoords.x, renderCoords.y,
-        renderCoords.width, images.sky.height
-        );
-    ctx.drawImage(
-        images.houses,
-        Math.min(mapOffset.x, mapWidth - window.innerWidth), mapOffset.y,
-        Math.min(window.innerWidth, images.houses.width), images.houses.height,
-        renderCoords.x, renderCoords.y,
-        Math.min(renderCoords.width, images.houses.width), renderCoords.height
-        );
-}
-
-function drawForeground(ctx, mapOffset, foregroundImage, renderCoords) {
-    ctx.drawImage(
-        foregroundImage,
-        ((mapOffset.x * 1.5) % foregroundImage.width) | 0, mapOffset.y,
-        Math.min(ctx.canvas.width, foregroundImage.width), foregroundImage.height,
-        renderCoords.x, renderCoords.y,
-        Math.min(ctx.canvas.width, foregroundImage.width), foregroundImage.height
-        );
+function drawPlanes(ctx, mapOffset, images, mapWidth, renderCoords, planes) {
+    planes.forEach(function(plane) {
+        var image = images[plane.image];
+        if(!plane.z) {
+            ctx.drawImage(
+                image,
+                0, 0,
+                image.width, image.height,
+                renderCoords.x, renderCoords.y,
+                renderCoords.width, image.height
+                );
+        }
+        else {
+            ctx.drawImage(
+                image,
+                Math.min(mapOffset.x, mapWidth - window.innerWidth), mapOffset.y,
+                Math.min(window.innerWidth, image.width), image.height,
+                renderCoords.x, renderCoords.y,
+                Math.min(renderCoords.width, image.width), renderCoords.height
+                );
+        }
+    });
 }
 
 function drawCharacters(host, currentMapOffset, renderCoords) {
@@ -157,25 +154,39 @@ function render(time, host) {
         host.characters.me.y,
         currentPhase.mapWidth
         );
+    var planes = currentPhase.rendering.planes.sort(function(a, b) {
+        return a.z - b.z;
+    });
+
+    var backgroundPlanes = planes.filter(function(plane) {return plane.z <= 1;});
+    var foregroundPlanes = planes.filter(function(plane) {return plane.z > 1;});
+    
     host.ctx.clearRect(0, 0, host.ctx.canvas.width, host.ctx.canvas.height);
-    drawBackground(
+    
+    drawPlanes(
         host.ctx,
         currentMapOffset,
         host.images,
         currentPhase.mapWidth,
-        renderCoords
+        renderCoords,
+        backgroundPlanes
         );
+
     drawCharacters(
         host,
         currentMapOffset,
         renderCoords
         );
-    drawForeground(
+
+    drawPlanes(
         host.ctx,
         currentMapOffset,
-        host.images.foreground,
-        renderCoords
+        host.images,
+        currentPhase.mapWidth,
+        renderCoords,
+        foregroundPlanes
         );
+
     if('currentLine' in currentPhase && currentPhase.currentLine !== null) {
         drawDialogue(
             host.ctx,
