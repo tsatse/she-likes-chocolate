@@ -2,9 +2,8 @@
     "phases": {
         "firstDialogue": {
             "gameplayType": "Dialogue",
-            "renderingType": "PointNClick",
             "basedOn": "intro",
-            "noInherit": {"gameplayType": true, "renderingType": true},
+            "noInherit": {"gameplayType": true},
             "defaultProperties": {
                 "me": {"x": 202, "y": 155, "color": "cyan"},
                 "her": {"x": 105, "y": 145, "color": "orange"}
