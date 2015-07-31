@@ -53,7 +53,8 @@ module.exports = function(grunt) {
             js: {
                 files: [
                     'src/**/*.js',
-                    'debug-assets/**/*.js'
+                    'debug-assets/**/*.js',
+                    'src/game-definition.json'
                 ],
                 tasks: [
                     'jshint',
