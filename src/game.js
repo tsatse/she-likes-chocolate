@@ -213,6 +213,11 @@ Game.prototype = {
             });
     },
 
+    renderDebug: function renderDebug() {
+        this.ctx.fillStyle = 'white';
+        this.ctx.fillText(this.phaseName, 10, 10);
+    },
+
     loop: function loop(time) {
         if(!this.changingPhase && this.renderer) {
             if(!this.lastUpdate) {
@@ -227,6 +232,9 @@ Game.prototype = {
             }
             if(this.renderer(time, this)) {
                 this.lastDraw = time;
+            }
+            if(this.debug) {
+                this.renderDebug();
             }
         }
 
