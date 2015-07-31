@@ -193,10 +193,16 @@ Game.prototype = {
                 }
                 if(phaseDescription.characters) {
                     var characterDescription;
-                    for(var characterName in phaseDescription.characters) {
+                    var characterName;
+                    for(characterName in phaseDescription.characters) {
                         if(!this.characters[characterName]) {
                             characterDescription = phaseDescription.characters[characterName];
                             this.characters[characterName] = new Character(characterDescription);
+                        }
+                    }
+                    for(characterName in this.characters) {
+                        if(!phaseDescription.characters[characterName]) {
+                            delete this.characters[characterName];
                         }
                     }
                 }
