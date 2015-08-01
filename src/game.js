@@ -7,11 +7,13 @@ var Character = require('./character');
 
 var gameplays = {
     Dialogue: require('./gameplay/dialogue'),
-    Wander: require('./gameplay/wander')
+    Wander: require('./gameplay/wander'),
+    default: function() {}
 };
 
 var renderers = {
-    PointNClick: require('./renderers/point-n-click')
+    PointNClick: require('./renderers/point-n-click'),
+    default: function() {}
 };
 
 
@@ -167,6 +169,17 @@ Game.prototype = {
         }
     },
 
+    updateWithDefaults: function updateWithDefaults(phaseDescription) {
+        if(!phaseDescription.gameplayType) {
+            phaseDescription.gameplayType = 'default';
+        }
+        if(!phaseDescription.rendering) {
+            phaseDescription.rendering = {
+                type: "default"
+            };
+        }
+    },
+
     gotoPhase: function gotoPhase(phaseName) {
         var phaseDescription;
         var propertyName;
@@ -182,6 +195,7 @@ Game.prototype = {
                     throw(new Error('No phase with name ' + phaseName));
                 }
                 phaseDescription = this.getFullDescription(this.phaseName);
+                this.updateWithDefaults(phaseDescription);
                 var imagesToLoad = this.filterImagesToLoad(phaseDescription);
                 if(Object.keys(imagesToLoad).length) {
                     return this.loadImages(imagesToLoad);
