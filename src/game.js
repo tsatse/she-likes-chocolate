@@ -169,6 +169,7 @@ Game.prototype = {
 
     gotoPhase: function gotoPhase(phaseName) {
         var phaseDescription;
+        var propertyName;
         this.changingPhase = true;
 
         return RSVP.Promise.resolve()
@@ -194,7 +195,7 @@ Game.prototype = {
                     this.phaseInstances[phaseName] = new gameplays[phaseDescription.gameplayType](this);
                     this.phaseInstances[phaseName].host = this;
                     this.phaseInstances[phaseName].name = phaseName;
-                    for(var propertyName in phaseDescription) {
+                    for(propertyName in phaseDescription) {
                         if(['images', 'gameplayType'].indexOf(propertyName) === -1) {
                             this.phaseInstances[phaseName][propertyName] = phaseDescription[propertyName];
                         }
@@ -207,6 +208,11 @@ Game.prototype = {
                         if(!this.characters[characterName]) {
                             characterDescription = phaseDescription.characters[characterName];
                             this.characters[characterName] = new Character(characterDescription);
+                        }
+                        else {
+                            for(propertyName in phaseDescription.characters[characterName]) {
+                                this.characters[characterName][propertyName] = phaseDescription.characters[characterName][propertyName];
+                            }
                         }
                     }
                     for(characterName in this.characters) {
