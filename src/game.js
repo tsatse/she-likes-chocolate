@@ -8,11 +8,13 @@ var Character = require('./character');
 var gameplays = {
     Dialogue: require('./gameplay/dialogue'),
     Wander: require('./gameplay/wander'),
-    default: function() {}
+    PressAnyKey: require('./gameplay/press-any-key'),
+    default: require('./gameplay/default')
 };
 
 var renderers = {
     PointNClick: require('./renderers/point-n-click'),
+    title: require('./renderers/title'),
     default: function() {}
 };
 
@@ -143,11 +145,19 @@ Game.prototype = {
         var imageName;
         var characterName;
 
-        phase.rendering.planes.forEach(function(plane){
-            if(!this.images[plane.image]) {
-                imagesToLoad[plane.image] = this.gameStructure.paths[plane.image];
+        if(phase.rendering.planes) {
+            phase.rendering.planes.forEach(function(plane){
+                if(!this.images[plane.image]) {
+                    imagesToLoad[plane.image] = this.gameStructure.paths[plane.image];
+                }
+            }.bind(this));
+        }
+
+        if(phase.rendering.image) {
+            if(!this.images[phase.rendering.image]) {
+                imagesToLoad[phase.rendering.image] = this.gameStructure.paths[phase.rendering.image];
             }
-        }.bind(this));
+        }
 
         for(characterName in phase.characters) {
             for(var stateName in this.gameStructure.sprites[phase.characters[characterName].sprites]) {
@@ -250,7 +260,8 @@ Game.prototype = {
 
     renderDebug: function renderDebug() {
         this.ctx.fillStyle = 'white';
-        this.ctx.fillText(this.phaseName, 10, 10);
+        this.ctx.font = 'normal 14pt helvetica';
+        this.ctx.fillText(this.phaseName, 10, 24);
     },
 
     loop: function loop(time) {
