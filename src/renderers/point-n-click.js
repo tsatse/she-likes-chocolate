@@ -132,7 +132,8 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
         ctx.fillStyle = 'black';
         ctx.fillText(
             '[' + character.x + ', ' + character.y + ']',
-            character.x + renderCoords.x, character.y + renderCoords.y
+            character.x + renderCoords.x - mapOffset.x,
+            character.y + renderCoords.y - mapOffset.y
             );
     }
     ctx.beginPath();
