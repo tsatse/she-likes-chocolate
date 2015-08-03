@@ -129,7 +129,11 @@ Game.prototype = {
         return hierarchy.reduce(function(phaseSoFar, currentPhaseName) {
             var currentDescription = this.gameStructure.phases[currentPhaseName];
             for(var propertyName in currentDescription) {
-                if(phaseSoFar[propertyName] && !(currentDescription.noInherit && currentDescription.noInherit[propertyName])) {
+                if(
+                    phaseSoFar[propertyName] &&
+                    !(currentDescription.noInherit && currentDescription.noInherit[propertyName]) &&
+                    typeof(currentDescription[propertyName]) !== string
+                ) {
                     phaseSoFar[propertyName] = Utils.deepMerge(phaseSoFar[propertyName], currentDescription[propertyName]);
                 }
                 else {
