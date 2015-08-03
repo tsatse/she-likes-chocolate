@@ -11,14 +11,17 @@ function render(time, host) {
         var image = host.images[renderingData.image];
         ctx.drawImage(image, 0, 0, image.width, image.height);
     }
-    ctx.font = 'normal 44pt helvetica' || renderingData.font;
-    var metrics = ctx.measureText(renderingData.text);
-    var x = (ctx.canvas.width - metrics.width) / 2;
-    var y = (ctx.canvas.height / 2);
+
+    if(renderingData.text) {
+        ctx.font = 'normal 44pt helvetica' || renderingData.font;
+        var metrics = ctx.measureText(renderingData.text);
+        var x = (ctx.canvas.width - metrics.width) / 2;
+        var y = (ctx.canvas.height / 2);
 
 
-    ctx.fillStyle = renderingData.color || 'white';
-    ctx.fillText(renderingData.text, x, y);
+        ctx.fillStyle = renderingData.color || 'white';
+        ctx.fillText(renderingData.text, x, y);
+    }
 }
 
 
