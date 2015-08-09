@@ -255,7 +255,7 @@
         "secondDialogue": {"end": "goingForChoco"},
         "atJoesGreeting": {"end": "atJoes"},
         "atJoes": {"exit": "outFromJoes"},
-        "outFromJoes": {""},
+        "outFromJoes": {},
         "fin": {"keyPressed": "atJoes"}
     },
     "sprites": {
