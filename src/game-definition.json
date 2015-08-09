@@ -145,6 +145,21 @@
             }
         },
 
+        "atJoesGreeting": {
+            "gameplayType": "Dialogue",
+            "basedOn": "atJoes",
+            "defaultProperties": {
+                "me": {"x": 202, "y": 155, "color": "cyan"},
+                "joe": {"color": "orange"}
+            },
+            "lines": [
+                {
+                    "who": "joe",
+                    "text": "Hello son"
+                }
+            ]
+        },
+
         "atJoes": {
             "gameplayType": "Wander",
             "renderHeight": 450,
@@ -173,6 +188,13 @@
                     "height": 150,
                     "x": 203,
                     "y": 185
+                },
+                "joe": {
+                    "sprites": "meDay",
+                    "width": 90,
+                    "height": 150,
+                    "x": 203,
+                    "y": 85                    
                 }
             },
             "walkSurface": [
@@ -196,15 +218,45 @@
                     "y": 150,
                     "zoom": 1
                 }
-            ]
+            ],
+            "sinks": {
+                "exit": {
+                    "x": 182,
+                    "y": 350,
+                    "width": 120,
+                    "height": 130
+                }
+            }
+        },
+
+        "title": {
+            "gameplayType": "PressAnyKey",
+            "rendering": {
+                "type": "title",
+                "text": "She likes chocolate"
+            },
+            "timeout": 2000
+        },
+
+        "fin": {
+            "gameplayType": "PressAnyKey",
+            "rendering": {
+                "type": "title",
+                "text": "Fin"
+            },
+            "timeout": 2000
         }
     },
     "plan": {
+        "title": {"keyPressed": "atJoes"},
         "intro": {"talkToHer": "firstDialogue"},
         "firstDialogue": {"end": "goingForChoco"},
-        "goingForChoco": {"talkToHer": "secondDialogue", "getAtJoes": "atJoes"},
+        "goingForChoco": {"talkToHer": "secondDialogue", "getAtJoes": "atJoesGreeting"},
         "secondDialogue": {"end": "goingForChoco"},
-        "atJoes": {}
+        "atJoesGreeting": {"end": "atJoes"},
+        "atJoes": {"exit": "outFromJoes"},
+        "outFromJoes": {""},
+        "fin": {"keyPressed": "atJoes"}
     },
     "sprites": {
         "meDay": {
@@ -242,5 +294,6 @@
         "meSpriteIdle":
             "art/me_sprite_idle.png"
     },
-    "entry": "intro"
+    "debug": true,
+    "entry": "atJoesGreeting"
 }
