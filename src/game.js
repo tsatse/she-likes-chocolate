@@ -35,7 +35,6 @@ function Game(canvas, gameStructure) {
     this.gameCanvas.height = window.innerHeight;
     this.ctx = this.gameCanvas.getContext('2d');
     document.addEventListener('keydown', function(event) {
-            //event.preventDefault();
             if(event.keyCode === 'I'.charCodeAt()) {
                 this.debug = !this.debug;
             }
@@ -132,7 +131,7 @@ Game.prototype = {
                 if(
                     phaseSoFar[propertyName] &&
                     !(currentDescription.noInherit && currentDescription.noInherit[propertyName]) &&
-                    typeof(currentDescription[propertyName]) !== string
+                    typeof(currentDescription[propertyName]) !== 'string'
                 ) {
                     phaseSoFar[propertyName] = Utils.deepMerge(phaseSoFar[propertyName], currentDescription[propertyName]);
                 }
