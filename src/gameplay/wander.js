@@ -10,50 +10,40 @@ Wander.prototype = {
         return true;
     },
 
+    isInSink: function isInSink(character, sink) {
+        return (
+            (character.x + character.width) >= sink.x &&
+            character.x <= (sink.x + sink.width) &&
+            (character.y + character.height) >= sink.y &&
+            character.y <= (sink.y + sink.height)
+        );
+    },
+
     updateMovement: function updateMovement(time) {
         var unit = 2;
-        this.host.characters.me.dx = 0;
-        this.host.characters.me.dy = 0;
+        var me = this.host.characters.me;
+        me.dx = 0;
+        me.dy = 0;
         if(this.host.keys.shift) {
             unit *= 2;
         }
-        if(this.host.keys[37]) { this.host.characters.me.dx -= unit;}
-        if(this.host.keys[39]) { this.host.characters.me.dx += unit;}
-        if(this.host.keys[38]) { this.host.characters.me.dy -= unit / 2;}
-        if(this.host.keys[40]) { this.host.characters.me.dy += unit / 2;}
+        if(this.host.keys[37] || this.host.keys['Q'.charCodeAt()] || this.host.keys['A'.charCodeAt()]) {
+            me.dx -= unit;}
+        if(this.host.keys[39] || this.host.keys['D'.charCodeAt()]) {
+            me.dx += unit;}
+        if(this.host.keys[38] || this.host.keys['Z'.charCodeAt()] || this.host.keys['W'.charCodeAt()]) {
+            me.dy -= unit / 2;}
+        if(this.host.keys[40] || this.host.keys['S'.charCodeAt()]) {
+            me.dy += unit / 2;}
 
         for(var sinkName in this.sinks) {
             var sink = this.sinks[sinkName];
+            var nextCoords = {x: me.x + me.dx, y: me.y + me.dy, width: me.width, height: me.height};
             if(
-                (
-                    this.host.characters.me.x === sink.x &&
-                    this.host.characters.me.y >= sink.y &&
-                    this.host.characters.me.y <= sink.y + sink.height &&
-                    ['walkRight', 'runRight'].indexOf(this.host.characters.me.action) !== -1
-                ) ||
-
-                (
-                    this.host.characters.me.x === sink.x + sink.width &&
-                    this.host.characters.me.y >= sink.y &&
-                    this.host.characters.me.y <= sink.y + sink.height &&
-                    ['walkLeft', 'runLeft'].indexOf(this.host.characters.me.action) !== -1
-                ) ||
-
-                (
-                    this.host.characters.me.y === sink.y &&
-                    this.host.characters.me.x >= sink.x &&
-                    this.host.characters.me.x <= sink.x + sink.width &&
-                    ['walkDown', 'runDown'].indexOf(this.host.characters.me.action) !== -1
-                ) ||
-
-                (
-                    this.host.characters.me.y === sink.y + sink.height &&
-                    this.host.characters.me.x >= sink.x &&
-                    this.host.characters.me.x <= sink.x + sink.width &&
-                    ['walkUp', 'runUp'].indexOf(this.host.characters.me.action) !== -1
-                )
+                !this.isInSink(me, sink) &&
+                this.isInSink(nextCoords, sink)
             ) {
-                this.host.characters.me.action = 'idle';
+                me.action = 'idle';
                 this.host.gotoSink(sinkName);
                 return;
             }
@@ -77,13 +67,13 @@ Wander.prototype = {
                 else if(character.dx < 0)
                     { character.setProperty('action', 'walkLeft');}
                 else if(character.dy > 2)
-                    { character.setProperty('action', 'runUp');}
-                else if(character.dy > 0)
-                    { character.setProperty('action', 'walkUp');}
-                else if(character.dy < -2)
                     { character.setProperty('action', 'runDown');}
-                else if(character.dy < 0)
+                else if(character.dy > 0)
                     { character.setProperty('action', 'walkDown');}
+                else if(character.dy < -2)
+                    { character.setProperty('action', 'runUp');}
+                else if(character.dy < 0)
+                    { character.setProperty('action', 'walkUp');}
                 else
                     { this.host.characters.me.setProperty('action', 'idle'); }
                 if(character.x + character.dx > this.minX && character.x + character.dx < this.maxX) {

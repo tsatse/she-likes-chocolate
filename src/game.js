@@ -7,11 +7,15 @@ var Character = require('./character');
 
 var gameplays = {
     Dialogue: require('./gameplay/dialogue'),
-    Wander: require('./gameplay/wander')
+    Wander: require('./gameplay/wander'),
+    PressAnyKey: require('./gameplay/press-any-key'),
+    default: require('./gameplay/default')
 };
 
 var renderers = {
-    PointNClick: require('./renderers/point-n-click')
+    PointNClick: require('./renderers/point-n-click'),
+    title: require('./renderers/title'),
+    default: function() {}
 };
 
 
@@ -22,15 +26,18 @@ function Game(canvas, gameStructure) {
     this.phaseInstances = {};
     this.registeredEventHandlers = {};
     this.lastUpdate = null;
-    this.renderer = renderers.PointNClick;
+    this.renderer = null;
     this.images = {};
+    this.debug = this.gameStructure.debug;
     this.keys = keys;
     this.gameCanvas = canvas;
     this.gameCanvas.width = window.innerWidth;
     this.gameCanvas.height = window.innerHeight;
     this.ctx = this.gameCanvas.getContext('2d');
     document.addEventListener('keydown', function(event) {
-            event.preventDefault();
+            if(event.keyCode === 'I'.charCodeAt()) {
+                this.debug = !this.debug;
+            }
             this.keys[event.keyCode] = true;
             if(event.shiftKey) {
                 this.keys.shift = true;
@@ -121,7 +128,11 @@ Game.prototype = {
         return hierarchy.reduce(function(phaseSoFar, currentPhaseName) {
             var currentDescription = this.gameStructure.phases[currentPhaseName];
             for(var propertyName in currentDescription) {
-                if(phaseSoFar[propertyName] && !(currentDescription.noInherit && currentDescription.noInherit[propertyName])) {
+                if(
+                    phaseSoFar[propertyName] &&
+                    !(currentDescription.noInherit && currentDescription.noInherit[propertyName]) &&
+                    typeof(currentDescription[propertyName]) !== 'string'
+                ) {
                     phaseSoFar[propertyName] = Utils.deepMerge(phaseSoFar[propertyName], currentDescription[propertyName]);
                 }
                 else {
@@ -132,18 +143,35 @@ Game.prototype = {
         }.bind(this), {});
     },
 
-    filterImagesToLoad: function filterImagesToLoad(images) {
-        if(!images) {
-            return {};
+    filterImagesToLoad: function filterImagesToLoad(phase) {
+        var imagesToLoad = {};
+        var imageName;
+        var characterName;
+
+        if(phase.rendering.planes) {
+            phase.rendering.planes.forEach(function(plane){
+                if(!this.images[plane.image]) {
+                    imagesToLoad[plane.image] = this.gameStructure.paths[plane.image];
+                }
+            }.bind(this));
         }
-        return Object.keys(images)
-            .filter(function(imageName) {
-                return !this.images[imageName];
-            }.bind(this))
-            .reduce(function(objectSoFar, imageName) {
-                objectSoFar[imageName] = images[imageName];
-                return objectSoFar;
-            }, {});
+
+        if(phase.rendering.image) {
+            if(!this.images[phase.rendering.image]) {
+                imagesToLoad[phase.rendering.image] = this.gameStructure.paths[phase.rendering.image];
+            }
+        }
+
+        for(characterName in phase.characters) {
+            for(var stateName in this.gameStructure.sprites[phase.characters[characterName].sprites]) {
+                imageName = this.gameStructure.sprites[phase.characters[characterName].sprites][stateName];
+                if(!this.images[imageName]) {
+                    imagesToLoad[imageName] =  this.gameStructure.paths[imageName];
+                }
+            }
+        }
+
+        return imagesToLoad;
     },
 
     mergeImages: function mergeImages(images) {
@@ -154,8 +182,20 @@ Game.prototype = {
         }
     },
 
+    updateWithDefaults: function updateWithDefaults(phaseDescription) {
+        if(!phaseDescription.gameplayType) {
+            phaseDescription.gameplayType = 'default';
+        }
+        if(!phaseDescription.rendering) {
+            phaseDescription.rendering = {
+                type: "default"
+            };
+        }
+    },
+
     gotoPhase: function gotoPhase(phaseName) {
         var phaseDescription;
+        var propertyName;
         this.changingPhase = true;
 
         return RSVP.Promise.resolve()
@@ -168,7 +208,8 @@ Game.prototype = {
                     throw(new Error('No phase with name ' + phaseName));
                 }
                 phaseDescription = this.getFullDescription(this.phaseName);
-                var imagesToLoad = this.filterImagesToLoad(phaseDescription.images);
+                this.updateWithDefaults(phaseDescription);
+                var imagesToLoad = this.filterImagesToLoad(phaseDescription);
                 if(Object.keys(imagesToLoad).length) {
                     return this.loadImages(imagesToLoad);
                 }
@@ -181,7 +222,7 @@ Game.prototype = {
                     this.phaseInstances[phaseName] = new gameplays[phaseDescription.gameplayType](this);
                     this.phaseInstances[phaseName].host = this;
                     this.phaseInstances[phaseName].name = phaseName;
-                    for(var propertyName in phaseDescription) {
+                    for(propertyName in phaseDescription) {
                         if(['images', 'gameplayType'].indexOf(propertyName) === -1) {
                             this.phaseInstances[phaseName][propertyName] = phaseDescription[propertyName];
                         }
@@ -189,10 +230,21 @@ Game.prototype = {
                 }
                 if(phaseDescription.characters) {
                     var characterDescription;
-                    for(var characterName in phaseDescription.characters) {
+                    var characterName;
+                    for(characterName in phaseDescription.characters) {
                         if(!this.characters[characterName]) {
                             characterDescription = phaseDescription.characters[characterName];
                             this.characters[characterName] = new Character(characterDescription);
+                        }
+                        else {
+                            for(propertyName in phaseDescription.characters[characterName]) {
+                                this.characters[characterName][propertyName] = phaseDescription.characters[characterName][propertyName];
+                            }
+                        }
+                    }
+                    for(characterName in this.characters) {
+                        if(!phaseDescription.characters[characterName]) {
+                            delete this.characters[characterName];
                         }
                     }
                 }
@@ -201,6 +253,7 @@ Game.prototype = {
                     this.phaseInstances[phaseName].init(phaseName);
                 }
                 this.registerEventHandlers(this.phaseInstances[this.phaseName]);
+                this.renderer = renderers[this.phaseInstances[this.phaseName].rendering.type];
                 this.changingPhase = false;
             }.bind(this))
             .catch(function(error) {
@@ -208,8 +261,14 @@ Game.prototype = {
             });
     },
 
+    renderDebug: function renderDebug() {
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = 'normal 14pt helvetica';
+        this.ctx.fillText(this.phaseName, 10, 24);
+    },
+
     loop: function loop(time) {
-        if(!this.changingPhase) {
+        if(!this.changingPhase && this.renderer) {
             if(!this.lastUpdate) {
                 this.lastUpdate = time;
             }
@@ -222,6 +281,9 @@ Game.prototype = {
             }
             if(this.renderer(time, this)) {
                 this.lastDraw = time;
+            }
+            if(this.debug) {
+                this.renderDebug();
             }
         }
 

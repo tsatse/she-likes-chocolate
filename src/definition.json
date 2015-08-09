@@ -1,0 +1,298 @@
+{
+    "phases": {
+        "firstDialogue": {
+            "gameplayType": "Dialogue",
+            "basedOn": "intro",
+            "noInherit": {"gameplayType": true},
+            "defaultProperties": {
+                "me": {"x": 202, "y": 155, "color": "cyan"},
+                "her": {"x": 105, "y": 145, "color": "orange"}
+            },
+            "lines": [
+                {
+                    "who": "me",
+                    "text": "Hey ! What's up ?"
+                },
+                {
+                    "who": "her",
+                    "text": "Hi..."
+                },
+                {
+                    "who": "me",
+                    "text": "What's wrong ? you seem so down."
+                },
+                {
+                    "who": "her",
+                    "text": "It's ok, I'm just in the mood for staring at the sea for a while."
+                },
+                {
+                    "who": "me",
+                    "text": "What can I do to cheer you up ?"
+                },
+                {
+                    "who": "her",
+                    "text": "All I wish for right now is a little piece of chocolate."
+                },
+                {
+                    "who": "me",
+                    "text": "Really ? Ah ah, just you wait !"
+                }
+            ]
+        },
+
+        "secondDialogue": {
+            "basedOn": "firstDialogue",
+            "noInherit": {"lines": true},
+            "restart": true,
+            "lines": [
+                {
+                    "who": "me",
+                    "text": "Hey, I'm almost done !"
+                },
+                {
+                    "who": "her",
+                    "text": "great"
+                },
+                {
+                    "who": "me",
+                    "text": "Well I'd better get going then"
+                }
+            ]
+         },
+
+        "intro": {
+            "gameplayType": "Wander",
+            "rendering": {
+                "type": "PointNClick",
+                "planes": [
+                    {
+                        "image": "sky",
+                        "z": 0
+                    },
+                    {
+                        "image": "houses",
+                        "z": 1
+                    },
+                    {
+                        "image": "foreground",
+                        "z": 1.5
+                    }
+                ]
+            },
+            "renderHeight": 450,
+            "mapWidth": 2400,
+            "minX": 200,
+            "maxX": 2350,
+            "minY": 150,
+            "maxY": 280,
+            "walkSurface": [
+                {
+                    "x": 200,
+                    "y": 150,
+                    "zoom": 1
+                },
+                {
+                    "x": 200,
+                    "y": 280,
+                    "zoom": 1.5
+                },
+                {
+                    "x": 2350,
+                    "y": 280,
+                    "zoom": 1.5
+                },
+                {
+                    "x": 2350,
+                    "y": 150,
+                    "zoom": 1
+                }
+            ],
+            "characters": {
+                "her": {
+                    "sprites": "herDay",
+                    "width": 90,
+                    "height": 150,
+                    "x": 125,
+                    "y": 155
+                },
+                "me": {
+                    "sprites": "meDay",
+                    "width": 90,
+                    "height": 150,
+                    "x": 203,
+                    "y": 185
+                }
+            },
+            "sinks": {
+                "talkToHer": {
+                    "x": 182,
+                    "y": 150,
+                    "width": 20,
+                    "height": 130
+                }
+            }
+        },
+
+        "goingForChoco": {
+            "basedOn": "intro",
+            "sinks": {
+                "getAtJoes": {
+                    "x": 400,
+                    "y": 215,
+                    "width": 50,
+                    "height": 50
+                }
+            }
+        },
+
+        "atJoesGreeting": {
+            "gameplayType": "Dialogue",
+            "basedOn": "atJoes",
+            "defaultProperties": {
+                "me": {"x": 202, "y": 155, "color": "cyan"},
+                "joe": {"color": "orange"}
+            },
+            "lines": [
+                {
+                    "who": "joe",
+                    "text": "Hello son"
+                }
+            ]
+        },
+
+        "atJoes": {
+            "gameplayType": "Wander",
+            "renderHeight": 450,
+            "mapWidth": 2400,
+            "minX": 200,
+            "maxX": 2350,
+            "minY": 150,
+            "maxY": 280,
+            "rendering": {
+                "type": "PointNClick",
+                "planes": [
+                    {
+                        "image": "sky",
+                        "z": 0
+                    },
+                    {
+                        "image": "foreground",
+                        "z": 1.5
+                    }
+                ]
+            },
+            "characters": {
+                "me": {
+                    "sprites": "meDay",
+                    "width": 90,
+                    "height": 150,
+                    "x": 203,
+                    "y": 185
+                },
+                "joe": {
+                    "sprites": "meDay",
+                    "width": 90,
+                    "height": 150,
+                    "x": 203,
+                    "y": 85                    
+                }
+            },
+            "walkSurface": [
+                {
+                    "x": 200,
+                    "y": 150,
+                    "zoom": 1
+                },
+                {
+                    "x": 200,
+                    "y": 280,
+                    "zoom": 1.5
+                },
+                {
+                    "x": 2350,
+                    "y": 280,
+                    "zoom": 1.5
+                },
+                {
+                    "x": 2350,
+                    "y": 150,
+                    "zoom": 1
+                }
+            ],
+            "sinks": {
+                "exit": {
+                    "x": 182,
+                    "y": 350,
+                    "width": 120,
+                    "height": 130
+                }
+            }
+        },
+
+        "title": {
+            "gameplayType": "PressAnyKey",
+            "rendering": {
+                "type": "title",
+                "text": "She likes chocolate"
+            },
+            "timeout": 2000
+        },
+
+        "fin": {
+            "gameplayType": "PressAnyKey",
+            "rendering": {
+                "type": "title",
+                "text": "Fin"
+            },
+            "timeout": 2000
+        }
+    },
+    "plan": {
+        "title": {"keyPressed": "firstDialogue"},
+        "intro": {"talkToHer": "firstDialogue"},
+        "firstDialogue": {"end": "goingForChoco"},
+        "goingForChoco": {"talkToHer": "secondDialogue", "getAtJoes": "atJoesGreeting"},
+        "secondDialogue": {"end": "goingForChoco"},
+        "atJoesGreeting": {"end": "atJoes"},
+        "atJoes": {"exit": "outFromJoes"},
+        "outFromJoes": {},
+        "fin": {"keyPressed": "atJoes"}
+    },
+    "sprites": {
+        "meDay": {
+            "idle": "meSpriteIdle",
+            "talking": "meSpriteIdle",
+            "walkLeft": "meSprite",
+            "runLeft": "meSprite",
+            "walkRight": "meSpriteRight",
+            "runRight": "meSpriteRight",
+            "walkUp": "meSpriteIdle",
+            "runUp": "meSpriteIdle",
+            "walkDown": "meSpriteIdle",
+            "runDown": "meSpriteIdle"
+        },
+        "herDay": {
+            "idle": "herSprite",
+            "talking": "herSprite",
+            "walkLeft": "herSprite",
+            "walkRight": "herSprite"
+        }
+    },
+    "paths": {
+        "sky":
+            "art/sky.png",
+        "foreground":
+            "art/foreground.png",
+        "houses":
+            "art/houses.png",
+        "herSprite":
+            "art/her_sprite.png",
+        "meSprite":
+            "art/me_sprite.png",
+        "meSpriteRight":
+            "art/me_sprite_right.png",
+        "meSpriteIdle":
+            "art/me_sprite_idle.png"
+    },
+    "entry": "title"
+}
