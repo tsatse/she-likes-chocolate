@@ -248,7 +248,7 @@
         }
     },
     "plan": {
-        "title": {"keyPressed": "atJoes"},
+        "title": {"keyPressed": "firstDialogue"},
         "intro": {"talkToHer": "firstDialogue"},
         "firstDialogue": {"end": "goingForChoco"},
         "goingForChoco": {"talkToHer": "secondDialogue", "getAtJoes": "atJoesGreeting"},
@@ -294,6 +294,5 @@
         "meSpriteIdle":
             "art/me_sprite_idle.png"
     },
-    "debug": true,
-    "entry": "atJoesGreeting"
+    "entry": "title"
 }
