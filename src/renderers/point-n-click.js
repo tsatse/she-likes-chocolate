@@ -61,19 +61,23 @@ function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites)
         );
 }
 
-function drawDialogue(ctx, currentLine, defaultProperties, renderCoords) {
+function drawDialogue(ctx, currentLine, defaultProperties, renderCoords, character, mapOffset) {
     if(currentLine === null) {
         return;
-    }
-    var position = defaultProperties[currentLine.who];
-    if(currentLine.position) {
-        position = currentLine.position;
     }
 
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.font = 'normal 14pt helvetica';
     var metrics = ctx.measureText(currentLine.text);
+    var position = defaultProperties[currentLine.who];
+    if(!position.x) {
+        position.x = character.x - mapOffset.x - metrics.width / 2 + character.width / 2;
+    }
+    if(!position.y) {
+        position.y = character.y - mapOffset.y - 40;
+    }
+
     ctx.fillStyle = 'white';
     if(defaultProperties[currentLine.who].color) {
         ctx.fillStyle = defaultProperties[currentLine.who].color;
@@ -245,7 +249,9 @@ function render(time, host) {
             host.ctx,
             currentPhase.lines[currentPhase.currentLine],
             currentPhase.defaultProperties,
-            renderCoords
+            renderCoords,
+            host.characters[currentPhase.lines[currentPhase.currentLine].who],
+            currentMapOffset
             );
     }
 
