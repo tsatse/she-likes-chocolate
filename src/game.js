@@ -219,6 +219,9 @@ Game.prototype = {
                     this.mergeImages(images);
                 }         
                 if(!this.phaseInstances[phaseName]) {
+                    if(!gameplays[phaseDescription.gameplayType]) {
+                        throw(new Error('no gameplay called ' + phaseDescription.gameplayType));
+                    }
                     this.phaseInstances[phaseName] = new gameplays[phaseDescription.gameplayType](this);
                     this.phaseInstances[phaseName].host = this;
                     this.phaseInstances[phaseName].name = phaseName;
