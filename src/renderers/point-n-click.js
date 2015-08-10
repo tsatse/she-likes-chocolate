@@ -142,18 +142,20 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
     }
     ctx.beginPath();
     ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
-    ctx.moveTo(
-        renderCoords.x + walkSurface[0].x - mapOffset.x,
-        renderCoords.y + walkSurface[0].y - mapOffset.y
-        );
-
-    walkSurface.slice(1).forEach(function(point) {
-        ctx.lineTo(
-            renderCoords.x + point.x - mapOffset.x,
-            renderCoords.y + point.y - mapOffset.y
+    if(walkSurface) {
+        ctx.moveTo(
+            renderCoords.x + walkSurface[0].x - mapOffset.x,
+            renderCoords.y + walkSurface[0].y - mapOffset.y
             );
-    });
-    ctx.fill();
+
+        walkSurface.slice(1).forEach(function(point) {
+            ctx.lineTo(
+                renderCoords.x + point.x - mapOffset.x,
+                renderCoords.y + point.y - mapOffset.y
+                );
+        });
+        ctx.fill();
+    }
 }
 
 function getMapOffset(x, y, mapWidth) {
