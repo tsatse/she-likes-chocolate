@@ -75,7 +75,7 @@ Wander.prototype = {
                 else if(character.dy < 0)
                     { character.setProperty('action', 'walkUp');}
                 else
-                    { this.host.characters.me.setProperty('action', 'idle'); }
+                    { character.setProperty('action', 'idle'); }
                 if(character.x + character.dx > this.minX && character.x + character.dx < this.maxX) {
                     character.x += character.dx;
                 }
