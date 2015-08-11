@@ -1,5 +1,6 @@
 var behaviours = {
-    'walker':  require('./walker')
+    'walker':  require('./npcs/walker'),
+    'shopKeeper': require('./npcs/shop-keeper')
 };
 
 

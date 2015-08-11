@@ -194,7 +194,10 @@
                     "width": 90,
                     "height": 150,
                     "x": 203,
-                    "y": 85                    
+                    "y": 85,
+                    "behaviour": {
+                        "type": "shopKeeper"
+                    }
                 }
             },
             "walkSurface": [

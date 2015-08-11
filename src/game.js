@@ -18,6 +18,10 @@ var renderers = {
     default: function() {}
 };
 
+var behaviours  = {
+    shopKeeper: require('./npcs/shop-keeper')
+};
+
 
 function Game(canvas, gameStructure) {
     this.phaseName = null;
