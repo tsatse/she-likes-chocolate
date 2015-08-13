@@ -39,32 +39,40 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
                 currentMapOffset,
                 host.images,
                 renderCoords,
-                host.gameStructure.sprites[character.sprites]
+                host.gameStructure.sprites[character.sprites],
+                host.getCurrentPhase()
                 );
         }
     }
 }
 
-function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites) {
+function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites, phase) {
     var image = images[sprites[character.action]];
     var xOffsetInSource = character.phase * character.width;
 
-    var scale = ((character.y - 150) / 4 + 150) / 150;
+    var scale = phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface);
+    if(!scale) {
+        scale = 1;
+    }
     ctx.drawImage(
         image,
-        xOffsetInSource, 0,
+        xOffsetInSource,
+        0,
         character.width,
         character.height,
         character.x - mapOffset.x + renderCoords.x - (character.width * scale - character.width) / 2,
-        character.y - mapOffset.y + renderCoords.y,
-        character.width * scale, character.height * scale
+        character.y - mapOffset.y + renderCoords.y - character.height * scale,
+        character.width * scale,
+        character.height * scale
         );
 }
 
-function drawDialogue(ctx, currentLine, defaultProperties, renderCoords, character, mapOffset) {
+function drawDialogue(ctx, currentLine, defaultProperties, renderCoords, character, mapOffset, phase) {
     if(currentLine === null) {
         return;
     }
+
+    var scale = phase.getZ(character.x, character.y, phase.walkSurface);
 
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -75,7 +83,7 @@ function drawDialogue(ctx, currentLine, defaultProperties, renderCoords, charact
         position.x = character.x - mapOffset.x - metrics.width / 2 + character.width / 2;
     }
     if(!position.y) {
-        position.y = character.y - mapOffset.y - 40;
+        position.y = character.y - mapOffset.y - 40 - character.height * scale;
     }
 
     ctx.fillStyle = 'white';
@@ -127,17 +135,18 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
 
     for(var characterName in characters) {
         character = characters[characterName];
+        var scale = (phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface)) || 1;
         ctx.strokeStyle = 'rgb(0, 255, 0)';
         ctx.strokeRect(
             renderCoords.x + character.x - mapOffset.x,
-            renderCoords.y + character.y - mapOffset.y,
-            character.width, character.height
+            renderCoords.y + character.y - mapOffset.y - character.height * scale,
+            character.width, character.height * scale
             );
         ctx.fillStyle = 'black';
         ctx.fillText(
-            '[' + character.x + ', ' + character.y + ']',
+            '[' + (character.x) + ', ' + (character.y + character.height) + ']',
             character.x + renderCoords.x - mapOffset.x,
-            character.y + renderCoords.y - mapOffset.y
+            character.y + renderCoords.y - mapOffset.y - character.height * scale
             );
     }
     ctx.beginPath();
@@ -253,7 +262,8 @@ function render(time, host) {
             currentPhase.defaultProperties,
             renderCoords,
             host.characters[currentPhase.lines[currentPhase.currentLine].who],
-            currentMapOffset
+            currentMapOffset,
+            currentPhase
             );
     }
 

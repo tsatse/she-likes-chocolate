@@ -14,9 +14,13 @@ Wander.prototype = {
         return (
             (character.x + character.width) >= sink.x &&
             character.x <= (sink.x + sink.width) &&
-            (character.y + character.height) >= sink.y &&
+            character.y >= sink.y &&
             character.y <= (sink.y + sink.height)
         );
+    },
+
+    getZ: function getZ(x, y, walkSurface) {
+        return ((y - 150) / 4 + 150) / 150;
     },
 
     updateMovement: function updateMovement(time) {
@@ -54,8 +58,8 @@ Wander.prototype = {
                 return this.host.characters[characterName];
             }.bind(this))
             .forEach(function(character) {
-                if(character.behaviour) {
-                    character.behaviour.update();
+                if(character._behaviour) {
+                    character._behaviour.update();
                 }
 
                 if(character.dx > 2)
@@ -79,7 +83,10 @@ Wander.prototype = {
                 if(character.x + character.dx > this.minX && character.x + character.dx < this.maxX) {
                     character.x += character.dx;
                 }
-                if(character.y + character.dy > this.minY && character.y + character.dy < this.maxY) {
+                if(
+                    (character.y + character.dy) > this.minY &&
+                    (character.y + character.dy) < this.maxY
+                ) {
                     character.y += character.dy;
                 }
             }.bind(this));
