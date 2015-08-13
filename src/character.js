@@ -1,6 +1,6 @@
 var behaviours = {
-    'walker':  require('./npcs/walker'),
-    'shopKeeper': require('./npcs/shop-keeper')
+    walker:  require('./npcs/walker'),
+    shopKeeper: require('./npcs/shop-keeper')
 };
 
 
@@ -19,7 +19,7 @@ Character.prototype = {
             this.setProperty(property, description[property]);
         }
         if(this.behaviour) {
-            this.behaviour = new behaviours[this.behaviour.type](this.behaviour, this);
+            this._behaviour = new behaviours[this.behaviour.type](this.behaviour, this);
         }
     },
 
