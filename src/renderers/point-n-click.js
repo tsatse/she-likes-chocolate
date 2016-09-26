@@ -61,7 +61,7 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
             dispayActionHint = true;
         }
     }.bind(this));
-    if(dispayActionHint) {
+    if(dispayActionHint && host.debug) {
         drawActionHint(host.ctx, host.characters.me, renderCoords);
     }
 }

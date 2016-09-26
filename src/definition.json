@@ -261,7 +261,7 @@
         }
     },
     "plan": {
-        "title": {"keyPressed": "firstDialogue"},
+        "title": {"keyPressed": "intro"},
         "intro": {"getAtJoes": "atJoes"},
         "atJoes": {"exit": "outFromJoes"},
         "outFromJoes": {},
