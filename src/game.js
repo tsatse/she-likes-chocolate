@@ -57,6 +57,11 @@ function Game(canvas, gameStructure) {
                 this.registeredEventHandlers.keyup(event);
             }
         }.bind(this), false);
+
+    window.addEventListener('resize', function(event) {
+            this.gameCanvas.width = window.innerWidth;
+            this.gameCanvas.height = window.innerHeight;
+        }.bind(this));
 }
 
 Game.prototype = {
@@ -166,7 +171,7 @@ Game.prototype = {
             for(var stateName in this.gameStructure.sprites[phase.characters[characterName].sprites]) {
                 imageName = this.gameStructure.sprites[phase.characters[characterName].sprites][stateName];
                 if(!this.images[imageName]) {
-                    imagesToLoad[imageName] =  this.gameStructure.paths[imageName];
+                    imagesToLoad[imageName] = this.gameStructure.paths[imageName];
                 }
             }
         }
