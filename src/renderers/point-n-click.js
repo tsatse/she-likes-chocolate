@@ -10,7 +10,7 @@ function drawPlanes(ctx, mapOffset, images, mapWidth, renderCoords, planes) {
                 0, 0,
                 image.width, image.height,
                 renderCoords.x, renderCoords.y,
-                renderCoords.width, image.height
+                image.width, image.height
                 );
         }
         else {
