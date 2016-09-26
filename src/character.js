@@ -1,6 +1,7 @@
 var behaviours = {
-    walker:  require('./npcs/walker'),
-    shopKeeper: require('./npcs/shop-keeper')
+    walker:  require('./behaviours/walker'),
+    shopKeeper: require('./behaviours/shop-keeper'),
+    linearTalker: require('./behaviours/linear-talker')
 };
 
 
@@ -14,13 +15,24 @@ Character.prototype = {
         this.phase = 0;
         this.dx = 0;
         this.dy = 0;
+        this._behaviour = [];
 
         for(var property in description) {
             this.setProperty(property, description[property]);
         }
         if(this.behaviour) {
-            this._behaviour = new behaviours[this.behaviour.type](this.behaviour, this);
+            this._behaviour = this.behaviour.map(function(behaviourData) {
+                var newBehaviour = new behaviours[behaviourData.type](behaviourData, this);
+                newBehaviour.character = this;
+                return newBehaviour;
+            }.bind(this));
         }
+    },
+
+    performAction: function performAction() {
+        this._behaviour.forEach(function(behaviour) {
+            behaviour.action();
+        });
     },
 
     setProperty: function setProperty(name, value) {

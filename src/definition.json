@@ -1,64 +1,13 @@
 {
     "phases": {
-        "firstDialogue": {
-            "gameplayType": "Dialogue",
-            "basedOn": "intro",
-            "noInherit": {"gameplayType": true},
-            "defaultProperties": {
-                "me": {"color": "cyan"},
-                "her": {"color": "orange"}
+        "title": {
+            "gameplayType": "PressAnyKey",
+            "rendering": {
+                "type": "title",
+                "text": "She likes chocolate"
             },
-            "lines": [
-                {
-                    "who": "me",
-                    "text": "Hey ! What's up ?"
-                },
-                {
-                    "who": "her",
-                    "text": "Hi..."
-                },
-                {
-                    "who": "me",
-                    "text": "What's wrong ? you seem so down."
-                },
-                {
-                    "who": "her",
-                    "text": "It's ok, I'm just in the mood for staring at the sea for a while."
-                },
-                {
-                    "who": "me",
-                    "text": "What can I do to cheer you up ?"
-                },
-                {
-                    "who": "her",
-                    "text": "All I wish for right now is a little piece of chocolate."
-                },
-                {
-                    "who": "me",
-                    "text": "Really ? Ah ah, just you wait !"
-                }
-            ]
+            "timeout": 2000
         },
-
-        "secondDialogue": {
-            "basedOn": "firstDialogue",
-            "noInherit": {"lines": true},
-            "restart": true,
-            "lines": [
-                {
-                    "who": "me",
-                    "text": "Hey, I'm almost done !"
-                },
-                {
-                    "who": "her",
-                    "text": "great"
-                },
-                {
-                    "who": "me",
-                    "text": "Well I'd better get going then"
-                }
-            ]
-         },
 
         "intro": {
             "gameplayType": "Wander",
@@ -113,28 +62,67 @@
                     "width": 90,
                     "height": 150,
                     "x": 125,
-                    "y": 305
+                    "y": 305,
+                    "dialogColor": "orange",
+                    "behaviour": [{
+                        "type": "linearTalker",
+                        "dialogs": [
+                            [
+                                {
+                                    "who": "me",
+                                    "text": "Hey ! What's up ?"
+                                },
+                                {
+                                    "who": "her",
+                                    "text": "Hi..."
+                                },
+                                {
+                                    "who": "me",
+                                    "text": "What's wrong ? you seem so down."
+                                },
+                                {
+                                    "who": "her",
+                                    "text": "It's ok, I'm just in the mood for staring at the sea for a while."
+                                },
+                                {
+                                    "who": "me",
+                                    "text": "What can I do to cheer you up ?"
+                                },
+                                {
+                                    "who": "her",
+                                    "text": "All I wish for right now is a little piece of chocolate."
+                                },
+                                {
+                                    "who": "me",
+                                    "text": "Really ? Ah ah, just you wait !"
+                                }
+                            ],
+                            [
+                                {
+                                    "who": "me",
+                                    "text": "Hey, I'm almost done !"
+                                },
+                                {
+                                    "who": "her",
+                                    "text": "great"
+                                },
+                                {
+                                    "who": "me",
+                                    "text": "Well I'd better get going then"
+                                }
+                            ]
+                        ]
+                    }]
                 },
                 "me": {
                     "sprites": "meDay",
                     "width": 90,
                     "height": 150,
                     "x": 203,
-                    "y": 300
+                    "y": 300,
+                    "dialogColor": "cyan"
                 }
             },
-            "sinks": {
-                "talkToHer": {
-                    "x": 182,
-                    "y": 265,
-                    "width": 20,
-                    "height": 130
-                }
-            }
-        },
-
-        "goingForChoco": {
-            "basedOn": "intro",
             "sinks": {
                 "getAtJoes": {
                     "x": 400,
@@ -145,21 +133,6 @@
             }
         },
 
-        "atJoesGreeting": {
-            "gameplayType": "Dialogue",
-            "basedOn": "atJoes",
-            "defaultProperties": {
-                "me": {"color": "cyan"},
-                "joe": {"color": "orange"}
-            },
-            "lines": [
-                {
-                    "who": "joe",
-                    "text": "Hello son"
-                }
-            ]
-        },
-
         "atJoes": {
             "gameplayType": "Wander",
             "renderHeight": 450,
@@ -167,7 +140,7 @@
             "minX": 200,
             "maxX": 2350,
             "minY": 150,
-            "maxY": 280,
+            "maxY": 380,
             "rendering": {
                 "type": "PointNClick",
                 "planes": [
@@ -195,9 +168,9 @@
                     "height": 150,
                     "x": 203,
                     "y": 85,
-                    "behaviour": {
+                    "behaviour": [{
                         "type": "shopKeeper"
-                    }
+                    }]
                 }
             },
             "walkSurface": [
@@ -208,12 +181,12 @@
                 },
                 {
                     "x": 200,
-                    "y": 280,
+                    "y": 380,
                     "zoom": 1.5
                 },
                 {
                     "x": 2350,
-                    "y": 280,
+                    "y": 380,
                     "zoom": 1.5
                 },
                 {
@@ -234,24 +207,38 @@
 
         "outFromJoes": {
             "gameplayType": "Wander",
+            "characters": {
+                "me": {
+                    "sprites": "meDay",
+                    "width": 90,
+                    "height": 150,
+                    "x": 425,
+                    "y": 270
+                },
+            },
             "rendering": {
                 "type": "PointNClick",
                 "planes": [
                     {
                         "image": "sky",
                         "z": 0
+                    },
+                    {
+                        "image": "houses",
+                        "z": 1
+                    },
+                    {
+                        "image": "foreground",
+                        "z": 1.5
                     }
                 ]
-            }
-        },
-
-        "title": {
-            "gameplayType": "PressAnyKey",
-            "rendering": {
-                "type": "title",
-                "text": "She likes chocolate"
             },
-            "timeout": 2000
+            "renderHeight": 450,
+            "mapWidth": 2400,
+            "minX": 200,
+            "maxX": 2350,
+            "minY": 265,
+            "maxY": 440
         },
 
         "fin": {
@@ -265,11 +252,7 @@
     },
     "plan": {
         "title": {"keyPressed": "firstDialogue"},
-        "intro": {"talkToHer": "firstDialogue"},
-        "firstDialogue": {"end": "goingForChoco"},
-        "goingForChoco": {"talkToHer": "secondDialogue", "getAtJoes": "atJoesGreeting"},
-        "secondDialogue": {"end": "goingForChoco"},
-        "atJoesGreeting": {"end": "atJoes"},
+        "intro": {"getAtJoes": "atJoes"},
         "atJoes": {"exit": "outFromJoes"},
         "outFromJoes": {},
         "fin": {"keyPressed": "atJoes"}

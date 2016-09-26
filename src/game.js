@@ -5,11 +5,11 @@ var keys = require('./keys');
 var Character = require('./character');
 
 
-var gameplays = {
-    Dialogue: require('./gameplay/dialogue'),
-    Wander: require('./gameplay/wander'),
-    PressAnyKey: require('./gameplay/press-any-key'),
-    default: require('./gameplay/default')
+var interactions = {
+    Dialogue: require('./interactions/dialogue'),
+    Wander: require('./interactions/wander'),
+    PressAnyKey: require('./interactions/press-any-key'),
+    default: require('./interactions/default')
 };
 
 var renderers = {
@@ -193,6 +193,15 @@ Game.prototype = {
         }
     },
 
+    getPhaseData: function getPhaseData(phaseName) {
+        if(!this.gameStructure.phases[this.phaseName]) {
+            throw(new Error('No phase with name ' + phaseName));
+        }
+        var phaseDescription = this.getFullDescription(this.phaseName);
+        this.updateWithDefaults(phaseDescription);
+        return phaseDescription;
+    },
+
     gotoPhase: function gotoPhase(phaseName) {
         var phaseDescription;
         var propertyName;
@@ -204,11 +213,7 @@ Game.prototype = {
                     this.unregisterEventHandlers(this.phaseInstances[this.phaseName]);
                 }
                 this.phaseName = phaseName;
-                if(!this.gameStructure.phases[this.phaseName]) {
-                    throw(new Error('No phase with name ' + phaseName));
-                }
-                phaseDescription = this.getFullDescription(this.phaseName);
-                this.updateWithDefaults(phaseDescription);
+                phaseDescription = this.getPhaseData(phaseName);
                 var imagesToLoad = this.filterImagesToLoad(phaseDescription);
                 if(Object.keys(imagesToLoad).length) {
                     return this.loadImages(imagesToLoad);
@@ -219,10 +224,10 @@ Game.prototype = {
                     this.mergeImages(images);
                 }         
                 if(!this.phaseInstances[phaseName]) {
-                    if(!gameplays[phaseDescription.gameplayType]) {
+                    if(!interactions[phaseDescription.gameplayType]) {
                         throw(new Error('no gameplay called ' + phaseDescription.gameplayType));
                     }
-                    this.phaseInstances[phaseName] = new gameplays[phaseDescription.gameplayType](this);
+                    this.phaseInstances[phaseName] = new interactions[phaseDescription.gameplayType](this);
                     this.phaseInstances[phaseName].host = this;
                     this.phaseInstances[phaseName].name = phaseName;
                     for(propertyName in phaseDescription) {
@@ -271,6 +276,7 @@ Game.prototype = {
     },
 
     loop: function loop(time) {
+        requestAnimationFrame(this.loop.bind(this));
         if(!this.changingPhase && this.renderer) {
             if(!this.lastUpdate) {
                 this.lastUpdate = time;
@@ -290,7 +296,6 @@ Game.prototype = {
             }
         }
 
-        requestAnimationFrame(this.loop.bind(this));
     }
 };
 
