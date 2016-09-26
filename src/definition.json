@@ -30,30 +30,26 @@
             },
             "renderHeight": 450,
             "mapWidth": 2400,
-            "minX": 200,
-            "maxX": 2350,
-            "minY": 265,
-            "maxY": 440,
             "walkSurface": [
                 {
                     "x": 200,
-                    "y": 265,
-                    "zoom": 1
+                    "y": 440,
+                    "zoom": 1.2
                 },
                 {
                     "x": 200,
-                    "y": 440,
-                    "zoom": 1.5
-                },
-                {
-                    "x": 2350,
-                    "y": 440,
-                    "zoom": 1.5
+                    "y": 265,
+                    "zoom": 1
                 },
                 {
                     "x": 2350,
                     "y": 265,
                     "zoom": 1
+                },
+                {
+                    "x": 2350,
+                    "y": 440,
+                    "zoom": 1.2
                 }
             ],
             "characters": {
@@ -137,10 +133,6 @@
             "gameplayType": "Wander",
             "renderHeight": 450,
             "mapWidth": 2400,
-            "minX": 200,
-            "maxX": 2350,
-            "minY": 150,
-            "maxY": 380,
             "rendering": {
                 "type": "PointNClick",
                 "planes": [
@@ -176,23 +168,23 @@
             "walkSurface": [
                 {
                     "x": 200,
-                    "y": 150,
-                    "zoom": 1
+                    "y": 380,
+                    "zoom": 1.2
                 },
                 {
                     "x": 200,
-                    "y": 380,
-                    "zoom": 1.5
-                },
-                {
-                    "x": 2350,
-                    "y": 380,
-                    "zoom": 1.5
+                    "y": 150,
+                    "zoom": 1
                 },
                 {
                     "x": 2350,
                     "y": 150,
                     "zoom": 1
+                },
+                {
+                    "x": 2350,
+                    "y": 380,
+                    "zoom": 1.2
                 }
             ],
             "sinks": {
@@ -214,8 +206,30 @@
                     "height": 150,
                     "x": 425,
                     "y": 270
-                },
+                }
             },
+            "walkSurface": [
+                {
+                    "x": 200,
+                    "y": 440,
+                    "zoom": 1.2
+                },
+                {
+                    "x": 200,
+                    "y": 265,
+                    "zoom": 1
+                },
+                {
+                    "x": 2350,
+                    "y": 265,
+                    "zoom": 1
+                },
+                {
+                    "x": 2350,
+                    "y": 440,
+                    "zoom": 1.2
+                }
+            ],
             "rendering": {
                 "type": "PointNClick",
                 "planes": [
@@ -234,11 +248,7 @@
                 ]
             },
             "renderHeight": 450,
-            "mapWidth": 2400,
-            "minX": 200,
-            "maxX": 2350,
-            "minY": 265,
-            "maxY": 440
+            "mapWidth": 2400
         },
 
         "fin": {
