@@ -55,7 +55,6 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
         }
     });
 
-
     var dispayActionHint = false;
     characterList.forEach(function(character) {
         if(character !== host.characters.me && getDistance(character, host.characters.me) < 100) {
@@ -80,9 +79,6 @@ function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites,
     var xOffsetInSource = character.phase * character.width;
 
     var scale = phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface);
-    if(!scale) {
-        scale = 1;
-    }
     ctx.drawImage(
         image,
         xOffsetInSource,
@@ -93,7 +89,7 @@ function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites,
         character.y - mapOffset.y + renderCoords.y - character.height * scale,
         character.width * scale,
         character.height * scale
-        );
+    );
     if(character.talkActivation) {
         character.talkActivation -= 1;
         drawDialogue(ctx, character.currentLine, renderCoords, characters[character.currentLine.who], mapOffset, phase);
