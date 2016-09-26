@@ -10,7 +10,7 @@ function drawPlanes(ctx, mapOffset, images, mapWidth, renderCoords, planes) {
                 0, 0,
                 image.width, image.height,
                 renderCoords.x, renderCoords.y,
-                renderCoords.width, image.height
+                image.width, image.height
                 );
         }
         else {
@@ -20,18 +20,27 @@ function drawPlanes(ctx, mapOffset, images, mapWidth, renderCoords, planes) {
                 Math.min(window.innerWidth, image.width), image.height,
                 renderCoords.x, renderCoords.y,
                 Math.min(renderCoords.width, image.width), renderCoords.height
-                );
+            );
         }
     });
 }
 
+function getDistance(pos1, pos2) {
+    var x = pos1.x - pos2.x;
+    var y = pos1.y - pos2.y;
+    return Math.sqrt(x * x + y * y);
+}
+
 function drawCharacters(host, currentMapOffset, renderCoords) {
-    var characterList = Object.keys(host.characters);
-    characterList.sort(function(a, b) {
-        return host.characters[a].y - host.characters[b].y;
-    }.bind(this));
-    for(var i = 0 ; i < characterList.length ; i++) {
-        var character = host.characters[characterList[i]];
+    var characterList = Object.keys(host.characters)
+        .map(function(characterName) {
+            return host.characters[characterName];
+        }.bind(this))
+        .sort(function(a, b) {
+            return a.y - b.y;
+        });
+
+    characterList.forEach(function(character) {
         if(isVisible(character, currentMapOffset)) {
             drawCharacter(
                 host.ctx,
@@ -39,48 +48,72 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
                 currentMapOffset,
                 host.images,
                 renderCoords,
-                host.gameStructure.sprites[character.sprites]
-                );
+                host.gameStructure.sprites[character.sprites],
+                host.getCurrentPhase(),
+                host.characters
+            );
         }
+    });
+
+    var dispayActionHint = false;
+    characterList.forEach(function(character) {
+        if(character !== host.characters.me && getDistance(character, host.characters.me) < 100) {
+            dispayActionHint = true;
+        }
+    }.bind(this));
+    if(dispayActionHint) {
+        drawActionHint(host.ctx, host.characters.me, renderCoords);
     }
 }
 
-function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites) {
+function drawActionHint(ctx, me, renderCoords) {
+    ctx.fillStyle = 'black';
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(me.x + me.width / 2 - 25, me.y - me.height + 25 + renderCoords.y, 50, 50);
+    // ctx.fillRect(me.x + me.width / 2 - 25, me.y - me.height + 25, 50, 50);
+    ctx.globalAlpha = 1;
+}
+
+function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites, phase, characters) {
     var image = images[sprites[character.action]];
     var xOffsetInSource = character.phase * character.width;
 
-    var scale = ((character.y - 150) / 4 + 150) / 150;
+    var scale = phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface);
     ctx.drawImage(
         image,
-        xOffsetInSource, 0,
+        xOffsetInSource,
+        0,
         character.width,
         character.height,
         character.x - mapOffset.x + renderCoords.x - (character.width * scale - character.width) / 2,
-        character.y - mapOffset.y + renderCoords.y,
-        character.width * scale, character.height * scale
-        );
+        character.y - mapOffset.y + renderCoords.y - character.height * scale,
+        character.width * scale,
+        character.height * scale
+    );
+    if(character.talkActivation) {
+        character.talkActivation -= 1;
+        drawDialogue(ctx, character.currentLine, renderCoords, characters[character.currentLine.who], mapOffset, phase);
+    }
 }
 
-function drawDialogue(ctx, currentLine, defaultProperties, renderCoords, character, mapOffset) {
+function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phase) {
     if(currentLine === null) {
         return;
     }
+
+    var scale = phase.getZ(character.x, character.y, phase.walkSurface);
 
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.font = 'normal 14pt helvetica';
     var metrics = ctx.measureText(currentLine.text);
-    var position = defaultProperties[currentLine.who];
-    if(!position.x) {
-        position.x = character.x - mapOffset.x - metrics.width / 2 + character.width / 2;
-    }
-    if(!position.y) {
-        position.y = character.y - mapOffset.y - 40;
-    }
+    var position = {};
+    position.x = character.x - mapOffset.x - metrics.width / 2 + character.width / 2;
+    position.y = character.y - mapOffset.y - 40 - character.height * scale;
 
     ctx.fillStyle = 'white';
-    if(defaultProperties[currentLine.who].color) {
-        ctx.fillStyle = defaultProperties[currentLine.who].color;
+    if(character.dialogColor) {
+        ctx.fillStyle = character.dialogColor;
     }
     ctx.strokeStyle = 'black';
     ctx.strokeRect(
@@ -127,33 +160,36 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
 
     for(var characterName in characters) {
         character = characters[characterName];
+        var scale = (phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface)) || 1;
         ctx.strokeStyle = 'rgb(0, 255, 0)';
         ctx.strokeRect(
             renderCoords.x + character.x - mapOffset.x,
-            renderCoords.y + character.y - mapOffset.y,
-            character.width, character.height
+            renderCoords.y + character.y - mapOffset.y - character.height * scale,
+            character.width, character.height * scale
             );
         ctx.fillStyle = 'black';
         ctx.fillText(
-            '[' + character.x + ', ' + character.y + ']',
+            '[' + (character.x) + ', ' + (character.y + character.height) + ']',
             character.x + renderCoords.x - mapOffset.x,
-            character.y + renderCoords.y - mapOffset.y
+            character.y + renderCoords.y - mapOffset.y - character.height * scale
             );
     }
     ctx.beginPath();
     ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
-    ctx.moveTo(
-        renderCoords.x + walkSurface[0].x - mapOffset.x,
-        renderCoords.y + walkSurface[0].y - mapOffset.y
-        );
-
-    walkSurface.slice(1).forEach(function(point) {
-        ctx.lineTo(
-            renderCoords.x + point.x - mapOffset.x,
-            renderCoords.y + point.y - mapOffset.y
+    if(walkSurface) {
+        ctx.moveTo(
+            renderCoords.x + walkSurface[0].x - mapOffset.x,
+            renderCoords.y + walkSurface[0].y - mapOffset.y
             );
-    });
-    ctx.fill();
+
+        walkSurface.slice(1).forEach(function(point) {
+            ctx.lineTo(
+                renderCoords.x + point.x - mapOffset.x,
+                renderCoords.y + point.y - mapOffset.y
+                );
+        });
+        ctx.fill();
+    }
 }
 
 function getMapOffset(x, y, mapWidth) {
@@ -243,17 +279,6 @@ function render(time, host) {
         renderCoords,
         foregroundPlanes
         );
-
-    if('currentLine' in currentPhase && currentPhase.currentLine !== null) {
-        drawDialogue(
-            host.ctx,
-            currentPhase.lines[currentPhase.currentLine],
-            currentPhase.defaultProperties,
-            renderCoords,
-            host.characters[currentPhase.lines[currentPhase.currentLine].who],
-            currentMapOffset
-            );
-    }
 
     if(host.debug) {
         drawDebug(host.ctx, currentPhase, renderCoords, host.characters, currentMapOffset);

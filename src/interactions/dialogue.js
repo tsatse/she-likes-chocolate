@@ -25,6 +25,10 @@ Dialogue.prototype = {
         }
     },
 
+    getZ: function getZ(x, y, walkSurface) {
+        return ((y - 150) / 4 + 150) / 150;
+    },
+
     goToLine: function goToLine(lineNumber) {
         this.currentLine = lineNumber;
     },

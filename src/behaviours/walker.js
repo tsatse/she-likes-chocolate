@@ -1,6 +1,5 @@
-function Walker(description, character) {
-    this.character = character;
-    this.wayPoints = description.wayPoints;
+function Walker(definition, character) {
+    this.wayPoints = definition.wayPoints;
     this.currentWaypoint = null;
 }
 
@@ -32,6 +31,10 @@ Walker.prototype = {
         walkVector.y = walkVector.y / distanceFromNextWaypoint;
         this.character.dx = walkVector.x * 2;
         this.character.dy = walkVector.y * 2;
+    },
+    
+    action: function action() {
+        
     }
 };
 
