@@ -105,5 +105,6 @@ function processImages(sourcePath, destinationPath) {
 
 
 module.exports = processImages;
+console.log('args : ', process.argv[2], process.argv[3]);
 
 processImages(process.argv[2], process.argv[3]);

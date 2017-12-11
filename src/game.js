@@ -1,6 +1,6 @@
 var RSVP = require('rsvp');
 
-var Utils = require('utils');
+var Utils = require('./utils');
 var keys = require('./keys');
 var Character = require('./character');
 

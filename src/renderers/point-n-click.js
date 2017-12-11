@@ -70,7 +70,6 @@ function drawActionHint(ctx, me, renderCoords) {
     ctx.fillStyle = 'black';
     ctx.globalAlpha = 0.5;
     ctx.fillRect(me.x + me.width / 2 - 25, me.y - me.height + 25 + renderCoords.y, 50, 50);
-    // ctx.fillRect(me.x + me.width / 2 - 25, me.y - me.height + 25, 50, 50);
     ctx.globalAlpha = 1;
 }
 

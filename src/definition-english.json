@@ -66,45 +66,45 @@
                             [
                                 {
                                     "who": "me",
-                                    "text": "Salut, comment ça va ?"
+                                    "text": "Hey ! What's up ?"
                                 },
                                 {
                                     "who": "her",
-                                    "text": "Salut..."
+                                    "text": "Hi..."
                                 },
                                 {
                                     "who": "me",
-                                    "text": "Qu'est-ce qu'il y a ? Ça n'a pas l'air d'aller."
+                                    "text": "What's wrong ? you seem so down."
                                 },
                                 {
                                     "who": "her",
-                                    "text": "Ça va, j'ai juste envie de regarder la mer un moment."
+                                    "text": "It's ok, I'm just in the mood for staring at the sea for a while."
                                 },
                                 {
                                     "who": "me",
-                                    "text": "Qu'est-ce que je peux faire pour te réconforter ?"
+                                    "text": "What can I do to cheer you up ?"
                                 },
                                 {
                                     "who": "her",
-                                    "text": "Tout ce que je veux pour l'instant, c'est un petit morceau de chocolat."
+                                    "text": "All I wish for right now is a little piece of chocolate."
                                 },
                                 {
                                     "who": "me",
-                                    "text": "Ah oui ? Ah ah, une seconde !"
+                                    "text": "Really ? Ah ah, just you wait !"
                                 }
                             ],
                             [
                                 {
                                     "who": "me",
-                                    "text": "He, ça vient hein !"
+                                    "text": "Hey, I'm almost done !"
                                 },
                                 {
                                     "who": "her",
-                                    "text": "super"
+                                    "text": "great"
                                 },
                                 {
                                     "who": "me",
-                                    "text": "Bon j'y retourne"
+                                    "text": "Well I'd better get going then"
                                 }
                             ]
                         ]
