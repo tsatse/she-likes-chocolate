@@ -4,6 +4,7 @@
   "description": "An adventure game",
   "main": "src/index.js",
   "scripts": {
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,14 +23,22 @@
   },
   "homepage": "https://github.com/tsatse/she-likes-chocolate#readme",
   "dependencies": {
-    "grunt": "^0.4.5",
-    "grunt-browserify2": "^0.1.8",
-    "grunt-contrib-connect": "^0.10.1",
-    "grunt-contrib-copy": "^0.8.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-open": "^0.2.3",
-    "pngjs": "^0.4.0",
-    "rsvp": "^3.0.18",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "shelljs": "^0.5.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.13.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.5.1",
+    "json-loader": "^0.5.7",
+    "open-browser-webpack-plugin": "^0.0.5",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
   }
 }

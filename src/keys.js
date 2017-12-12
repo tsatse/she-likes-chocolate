@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     37: false,
     38: false,
     39: false,

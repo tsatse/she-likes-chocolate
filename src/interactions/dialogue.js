@@ -1,17 +1,17 @@
-function Dialogue(host) {
-    this.currentLine = 0;
-}
-
-Dialogue.prototype = {
-    eventHandlers: {
-        keyup: function(event) {
-            if(event.keyCode === 32) {
-                this.goToNextLine();
+export default class Dialogue {
+    constructor() {
+        this.currentLine = 0;
+        this.eventHandlers = {
+            keyup: function(event) {
+                if(event.keyCode === 32) {
+                    this.goToNextLine();
+                }
             }
-        }
-    },
+        };
+    }
 
-    goToNextLine: function goToNextLine() {
+
+    goToNextLine() {
         if(this.currentLine === null) {
             this.goToLine(0);
         }
@@ -23,17 +23,17 @@ Dialogue.prototype = {
                 this.host.gotoSink('end');
             }
         }
-    },
+    }
 
-    getZ: function getZ(x, y, walkSurface) {
+    getZ(x, y, walkSurface) {
         return ((y - 150) / 4 + 150) / 150;
-    },
+    }
 
-    goToLine: function goToLine(lineNumber) {
+    goToLine(lineNumber) {
         this.currentLine = lineNumber;
-    },
+    }
 
-    init: function init() {
+    init() {
         this.saveCanvas = document.createElement('canvas');
         this.saveCanvas.width = this.host.gameCanvas.width;
         this.saveCanvas.height = this.host.gameCanvas.height;
@@ -56,15 +56,12 @@ Dialogue.prototype = {
         Object.keys(involvedCharacters).forEach(function(characterName) {
             this.host.characters[characterName].action = 'talking';
         }.bind(this));
-    },
-
-    update: function update() {
-
-    },
-
-    draw: function draw() {
     }
-};
 
+    update() {
 
-module.exports = Dialogue;
+    }
+
+    draw() {
+    }
+}

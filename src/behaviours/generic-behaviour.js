@@ -1,9 +1,3 @@
-function GenericBehaviour() {
+export default class GenericBehaviour {
 
 }
-
-GenericBehaviour.prototype = {
-
-};
-
-module.exports = GenericBehaviour;

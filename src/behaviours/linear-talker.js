@@ -1,15 +1,14 @@
-function LinearTalker(definition, character) {
-    this.dialogs = definition.dialogs;
-    this.currentDialog = 0;
-    this.currentLine = 0;
-}
+export default class LinearTalker {
+    constructor(definition, character) {
+        this.dialogs = definition.dialogs;
+        this.currentDialog = 0;
+        this.currentLine = 0;
+    }
 
-LinearTalker.prototype = {
-    update: function update() {
+    update() {
+    }
 
-    },
-
-    _incDialog: function _incDialog() {
+    _incDialog() {
         if(this.currentLine + 1 >= this.dialogs[this.currentDialog].length) {
             if(this.currentDialog + 1 < this.dialogs.length) {
                 this.currentDialog += 1;
@@ -20,9 +19,9 @@ LinearTalker.prototype = {
         else {
             this.currentLine += 1;
         }
-    },
+    }
 
-    action: function action() {
+    action() {
         if(
             this.dialogs.length >= this.currentDialog + 1 &&
             this.dialogs[this.currentDialog].length >= this.currentLine &&
@@ -33,7 +32,4 @@ LinearTalker.prototype = {
             this.dialogWasIncremented = this._incDialog();
         }
     }
-};
-
-
-module.exports = LinearTalker;
+}

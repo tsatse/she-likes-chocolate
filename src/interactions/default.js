@@ -1,11 +1,4 @@
-function DefaultGameplay() {
-    
-}
-
-DefaultGameplay.prototype = {
-    update: function update() {
+export default class DefaultGameplay {
+    update() {
     }
-};
-
-
-module.exports = DefaultGameplay;
+}

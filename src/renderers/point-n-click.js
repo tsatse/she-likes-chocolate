@@ -1,9 +1,9 @@
-var lastFrameUpdate = null;
+let lastFrameUpdate = null;
 
 
 function drawPlanes(ctx, mapOffset, images, mapWidth, renderCoords, planes) {
-    planes.forEach(function(plane) {
-        var image = images[plane.image];
+    planes.forEach(plane => {
+        const image = images[plane.image];
         if(!plane.z) {
             ctx.drawImage(
                 image,
@@ -26,21 +26,17 @@ function drawPlanes(ctx, mapOffset, images, mapWidth, renderCoords, planes) {
 }
 
 function getDistance(pos1, pos2) {
-    var x = pos1.x - pos2.x;
-    var y = pos1.y - pos2.y;
+    const x = pos1.x - pos2.x;
+    const y = pos1.y - pos2.y;
     return Math.sqrt(x * x + y * y);
 }
 
 function drawCharacters(host, currentMapOffset, renderCoords) {
-    var characterList = Object.keys(host.characters)
-        .map(function(characterName) {
-            return host.characters[characterName];
-        }.bind(this))
-        .sort(function(a, b) {
-            return a.y - b.y;
-        });
+    const characters = Object.keys(host.characters)
+        .map(characterName => host.characters[characterName])
+        .sort((a, b) => a.y - b.y);
 
-    characterList.forEach(function(character) {
+    characters.forEach(character => {
         if(isVisible(character, currentMapOffset)) {
             drawCharacter(
                 host.ctx,
@@ -56,11 +52,11 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
     });
 
     var dispayActionHint = false;
-    characterList.forEach(function(character) {
+    characters.forEach(character => {
         if(character !== host.characters.me && getDistance(character, host.characters.me) < 100) {
             dispayActionHint = true;
         }
-    }.bind(this));
+    });
     if(dispayActionHint && host.debug) {
         drawActionHint(host.ctx, host.characters.me, renderCoords);
     }
@@ -69,15 +65,18 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
 function drawActionHint(ctx, me, renderCoords) {
     ctx.fillStyle = 'black';
     ctx.globalAlpha = 0.5;
-    ctx.fillRect(me.x + me.width / 2 - 25, me.y - me.height + 25 + renderCoords.y, 50, 50);
+    ctx.fillRect(
+        me.x + me.width / 2 - 25,
+        me.y - me.height + 25 + renderCoords.y,
+        50, 50);
     ctx.globalAlpha = 1;
 }
 
 function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites, phase, characters) {
-    var image = images[sprites[character.action]];
-    var xOffsetInSource = character.phase * character.width;
+    const image = images[sprites[character.action]];
+    const xOffsetInSource = character.phase * character.width;
 
-    var scale = phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface);
+    const scale = phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface);
     ctx.drawImage(
         image,
         xOffsetInSource,
@@ -100,13 +99,13 @@ function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phas
         return;
     }
 
-    var scale = phase.getZ(character.x, character.y, phase.walkSurface);
+    const scale = phase.getZ(character.x, character.y, phase.walkSurface);
 
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.font = 'normal 14pt helvetica';
-    var metrics = ctx.measureText(currentLine.text);
-    var position = {};
+    const metrics = ctx.measureText(currentLine.text);
+    const position = {};
     position.x = character.x - mapOffset.x - metrics.width / 2 + character.width / 2;
     position.y = character.y - mapOffset.y - 40 - character.height * scale;
 
@@ -137,45 +136,45 @@ function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phas
 }
 
 function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
-    var sink;
-    var character;
-    var x;
-    var y;
-    var walkSurface = phase.walkSurface;
+    let x;
+    let y;
+    const walkSurface = phase.walkSurface;
 
-    for(var sinkName in phase.sinks) {
-        sink = phase.sinks[sinkName];
-        x = sink.x + renderCoords.x - mapOffset.x;
-        y = sink.y + renderCoords.y - mapOffset.y;
-        ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-        ctx.fillRect(x, y, sink.width, sink.height);
-        ctx.fillStyle = 'rgb(255, 255, 255)';
-        ctx.fillText(sinkName, x + 1, y + 1);
-        ctx.fillStyle = 'rgb(255, 255, 255)';
-        ctx.fillText(sinkName, x - 1, y - 1);
-        ctx.fillStyle = 'rgb(0, 0, 0)';
-        ctx.fillText(sinkName, x, y);
-    }
+    Object.entries(phase.sinks)
+        .forEach(([sinkName, sink]) => {
+            sink = phase.sinks[sinkName];
+            x = sink.x + renderCoords.x - mapOffset.x;
+            y = sink.y + renderCoords.y - mapOffset.y;
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            ctx.fillRect(x, y, sink.width, sink.height);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillText(sinkName, x + 1, y + 1);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillText(sinkName, x - 1, y - 1);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillText(sinkName, x, y);
+        });
 
-    for(var characterName in characters) {
-        character = characters[characterName];
-        var scale = (phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface)) || 1;
-        ctx.strokeStyle = 'rgb(0, 255, 0)';
-        ctx.strokeRect(
-            renderCoords.x + character.x - mapOffset.x,
-            renderCoords.y + character.y - mapOffset.y - character.height * scale,
-            character.width, character.height * scale
-            );
-        ctx.fillStyle = 'black';
-        ctx.fillText(
-            '[' + (character.x) + ', ' + (character.y + character.height) + ']',
-            character.x + renderCoords.x - mapOffset.x,
-            character.y + renderCoords.y - mapOffset.y - character.height * scale
-            );
-    }
+    Object.entries(characters)
+        .forEach(([characterName, character]) => {
+            character = characters[characterName];
+            var scale = (phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface)) || 1;
+            ctx.strokeStyle = 'rgb(0, 255, 0)';
+            ctx.strokeRect(
+                renderCoords.x + character.x - mapOffset.x,
+                renderCoords.y + character.y - mapOffset.y - character.height * scale,
+                character.width, character.height * scale
+                );
+            ctx.fillStyle = 'black';
+            ctx.fillText(
+                '[' + (character.x) + ', ' + (character.y + character.height) + ']',
+                character.x + renderCoords.x - mapOffset.x,
+                character.y + renderCoords.y - mapOffset.y - character.height * scale
+                );
+        });
     ctx.beginPath();
     ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
-    if(walkSurface) {
+    if (walkSurface) {
         ctx.moveTo(
             renderCoords.x + walkSurface[0].x - mapOffset.x,
             renderCoords.y + walkSurface[0].y - mapOffset.y
@@ -192,16 +191,19 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
 }
 
 function getMapOffset(x, y, mapWidth) {
-    var result = {x:0, y:0};
-    if(x > (window.innerWidth / 2)) {
-        result.x = Math.min(x - window.innerWidth / 2, mapWidth - window.innerWidth);
+    const result = { x: 0, y: 0 };
+    if (x > (window.innerWidth / 2)) {
+        result.x = Math.min(
+            x - window.innerWidth / 2,
+            mapWidth - window.innerWidth
+        );
     }
     
     return result;
 }
 
 function isVisible(character, currentMapOffset) {
-    if(
+    if (
         (character.x + character.width - currentMapOffset.x) > 0 &&
         (character.x - currentMapOffset.x) < window.innerWidth
     ) {
@@ -211,29 +213,26 @@ function isVisible(character, currentMapOffset) {
 }
 
 function updateFrames(time, images, characters, sprites) {
-    if(!lastFrameUpdate) {
+    if (!lastFrameUpdate) {
         lastFrameUpdate = time;
     }
-    if((time - lastFrameUpdate) < (1000 / 12)) {
+    if ((time - lastFrameUpdate) < (1000 / 12)) {
         return;
     }
-    Object.keys(characters)
-        .map(function(characterName) {
-            return characters[characterName];
-        }.bind(this))
-        .forEach(function(character) {
+    Object.values(characters)
+        .forEach(character => {
             character.phase = (character.phase + 1) % (images[sprites[character.sprites][character.action]].width / character.width);
-        }.bind(this));
+        });
     lastFrameUpdate = time;
 }
 
-function render(time, host) {
+export default function render(time, host) {
     updateFrames(time, host.images, host.characters, host.gameStructure.sprites);
-    if((time - host.lastDraw) < 40) {
+    if ((time - host.lastDraw) < 40) {
         return;
     }
-    var currentPhase = host.getCurrentPhase();
-    var renderCoords = {
+    const currentPhase = host.getCurrentPhase();
+    const renderCoords = {
         width: currentPhase.renderWidth || window.innerWidth,
         height: currentPhase.renderHeight || window.innerHeight
     };
@@ -241,17 +240,15 @@ function render(time, host) {
     renderCoords.x = (window.innerWidth - renderCoords.width) / 2;
     renderCoords.y = (window.innerHeight - renderCoords.height) / 2;
 
-    var currentMapOffset = getMapOffset(
+    const currentMapOffset = getMapOffset(
         host.characters.me.x,
         host.characters.me.y,
         currentPhase.mapWidth
         );
-    var planes = currentPhase.rendering.planes.sort(function(a, b) {
-        return a.z - b.z;
-    });
+    const planes = currentPhase.rendering.planes.sort((a, b) => (a.z - b.z));
 
-    var backgroundPlanes = planes.filter(function(plane) {return plane.z <= 1;});
-    var foregroundPlanes = planes.filter(function(plane) {return plane.z > 1;});
+    const backgroundPlanes = planes.filter(plane => plane.z <= 1);
+    const foregroundPlanes = planes.filter(plane => plane.z > 1);
     
     host.ctx.clearRect(0, 0, host.ctx.canvas.width, host.ctx.canvas.height);
     
@@ -283,6 +280,3 @@ function render(time, host) {
         drawDebug(host.ctx, currentPhase, renderCoords, host.characters, currentMapOffset);
     }
 }
-
-
-module.exports = render;

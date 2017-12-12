@@ -1,14 +1,14 @@
-function Walker(definition, character) {
-    this.wayPoints = definition.wayPoints;
-    this.currentWaypoint = null;
-}
+export default class Walker {
+    constructor(definition, character) {
+        this.wayPoints = definition.wayPoints;
+        this.currentWaypoint = null;
+    }
 
-Walker.prototype = {
-    incWayPoint: function incWayPoint() {
+    incWayPoint() {
         this.currentWaypoint = (this.currentWaypoint + 1) % this.wayPoints.length;
-    },
+    }
 
-    update: function update() {
+    update() {
         if(this.currentWaypoint === null) {
             this.character.x = this.wayPoints[0].x;
             this.character.y = this.wayPoints[0].y;
@@ -31,12 +31,9 @@ Walker.prototype = {
         walkVector.y = walkVector.y / distanceFromNextWaypoint;
         this.character.dx = walkVector.x * 2;
         this.character.dy = walkVector.y * 2;
-    },
+    }
     
-    action: function action() {
+    action() {
         
     }
-};
-
-
-module.exports = Walker;
+}

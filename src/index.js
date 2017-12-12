@@ -1,15 +1,13 @@
-﻿var Utils = require('./utils');
-var GameEngine = require('./game');
-var gameDefinition = require('./definition.json');
+﻿import { merge } from './utils';
+import GameEngine from './game';
+import gameDefinition from './definition.json';
 
-var override = require('./override-for-debug.json');
+import override from './override-for-debug.json';
 
-gameDefinition = Utils.merge(gameDefinition, override);
 
-var theGame = new GameEngine(
+const definition = { ...gameDefinition, ...override };
+
+(new GameEngine(
     document.getElementById('game-canvas'),
-    gameDefinition    
-);
-
-
-theGame.start();
+    definition    
+)).start();
