@@ -10,7 +10,6 @@ export default class Dialogue {
         };
     }
 
-
     goToNextLine() {
         if(this.currentLine === null) {
             this.goToLine(0);

@@ -28,7 +28,7 @@ export default class LinearTalker {
             !(this.dialogWasIncremented && this.character.talkActivation)
         ) {
             this.character.currentLine = this.dialogs[this.currentDialog][this.currentLine];
-            this.character.talkActivation = 120;
+            this.character.talkActivation = 500;
             this.dialogWasIncremented = this._incDialog();
         }
     }

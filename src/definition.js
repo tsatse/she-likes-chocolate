@@ -1,4 +1,4 @@
-{
+export default {
     "phases": {
         "title": {
             "gameplayType": "PressAnyKey",
@@ -121,9 +121,9 @@
             },
             "sinks": {
                 "getAtJoes": {
-                    "x": 400,
-                    "y": 215,
-                    "width": 50,
+                    "x": 395,
+                    "y": 216,
+                    "width": 120,
                     "height": 50
                 }
             }
@@ -303,5 +303,5 @@
         "meSpriteIdle":
             "art/me_sprite_idle.png"
     },
-    "entry": "title"
-}
+    "entry": "outFromJoes"
+};

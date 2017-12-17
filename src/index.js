@@ -1,8 +1,8 @@
 ﻿import { merge } from './utils';
 import GameEngine from './game';
-import gameDefinition from './definition.json';
+import gameDefinition from './definition';
 
-import override from './override-for-debug.json';
+import override from './override-for-debug';
 
 
 const definition = { ...gameDefinition, ...override };

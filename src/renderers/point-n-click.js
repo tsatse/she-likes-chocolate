@@ -102,7 +102,6 @@ function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phas
     const scale = phase.getZ(character.x, character.y, phase.walkSurface);
 
     ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
     ctx.font = 'normal 14pt helvetica';
     const metrics = ctx.measureText(currentLine.text);
     const position = {};
@@ -114,15 +113,18 @@ function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phas
         ctx.fillStyle = character.dialogColor;
     }
     ctx.strokeStyle = 'black';
+    const margin = 4;
+    const left = Math.max(margin, position.x + renderCoords.x);
+    const top = Math.max(margin, position.y + renderCoords.y);
     ctx.strokeRect(
-        position.x + renderCoords.x,
-        position.y + renderCoords.y,
+        left,
+        top,
         metrics.width + 10, 30
         );
     ctx.globalAlpha = 0.85;
     ctx.fillRect(
-        position.x + renderCoords.x,
-        position.y + renderCoords.y,
+        left,
+        top,
         metrics.width + 10,
         30
         );
@@ -130,9 +132,18 @@ function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phas
     ctx.fillStyle = 'black';
     ctx.fillText(
         currentLine.text,
-        position.x + 5 + renderCoords.x,
-        position.y + 5 + renderCoords.y
+        left + 5,
+        top + 5
         );
+}
+
+function drawText(ctx, text, x, y, color) {
+    ctx.fillStyle = 'rgb(255, 255, 255)';
+    ctx.fillText(text, x + 1, y + 1);
+    ctx.fillStyle = 'rgb(255, 255, 255)';
+    ctx.fillText(text, x - 1, y - 1);
+    ctx.fillStyle = color || 'black';
+    ctx.fillText(text, x, y);
 }
 
 function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
@@ -140,24 +151,30 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
     let y;
     const walkSurface = phase.walkSurface;
 
-    Object.entries(phase.sinks)
-        .forEach(([sinkName, sink]) => {
-            sink = phase.sinks[sinkName];
-            x = sink.x + renderCoords.x - mapOffset.x;
-            y = sink.y + renderCoords.y - mapOffset.y;
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-            ctx.fillRect(x, y, sink.width, sink.height);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillText(sinkName, x + 1, y + 1);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillText(sinkName, x - 1, y - 1);
-            ctx.fillStyle = 'rgb(0, 0, 0)';
-            ctx.fillText(sinkName, x, y);
-        });
+    if (phase.sinks) {
+        Object.entries(phase.sinks)
+            .forEach(([sinkName, sink]) => {
+                sink = phase.sinks[sinkName];
+                x = sink.x + renderCoords.x - mapOffset.x;
+                y = sink.y + renderCoords.y - mapOffset.y;
+                const sinkText = `[${sink.x} ${sink.y}]`;
+                ctx.textAlign = 'center';
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                ctx.fillRect(x, y, sink.width, sink.height);
+                drawText(ctx, `[${sink.x} ${sink.y}]`, x, y, 'rgb(128,0,0)');
+                drawText(
+                    ctx,
+                    `[${sink.x + sink.width} ${sink.y + sink.height}]`,
+                    x + sink.width,
+                    y + sink.height,
+                    'rgb(128,0,0)'
+                );
+                ctx.textAlign = 'left';
+            });
+    }
 
     Object.entries(characters)
         .forEach(([characterName, character]) => {
-            character = characters[characterName];
             var scale = (phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface)) || 1;
             ctx.strokeStyle = 'rgb(0, 255, 0)';
             ctx.strokeRect(
@@ -166,11 +183,22 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
                 character.width, character.height * scale
                 );
             ctx.fillStyle = 'black';
-            ctx.fillText(
-                '[' + (character.x) + ', ' + (character.y + character.height) + ']',
+            ctx.textAlign = 'center';
+            drawText(
+                ctx,
+                `[${character.x}, ${character.y}]`,
                 character.x + renderCoords.x - mapOffset.x,
-                character.y + renderCoords.y - mapOffset.y - character.height * scale
-                );
+                character.y + renderCoords.y - mapOffset.y - character.height * scale,
+                'rgb(0,128,0)'
+            );
+            drawText(
+                ctx,
+                `[${character.x + character.width}, ${character.y + character.height}]`,
+                character.x + character.width + renderCoords.x - mapOffset.x,
+                character.y + renderCoords.y - mapOffset.y * scale + 16,
+                'rgb(0,128,0)'
+            );
+            ctx.textAlign = 'left';
         });
     ctx.beginPath();
     ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
@@ -226,7 +254,12 @@ function updateFrames(time, images, characters, sprites) {
     lastFrameUpdate = time;
 }
 
+function resetSettings(ctx) {
+    ctx.textBaseline = 'top';
+}
+
 export default function render(time, host) {
+    resetSettings(host.ctx);
     updateFrames(time, host.images, host.characters, host.gameStructure.sprites);
     if ((time - host.lastDraw) < 40) {
         return;

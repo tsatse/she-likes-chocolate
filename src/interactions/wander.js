@@ -36,12 +36,12 @@ export default class Wander {
         return Math.sqrt(x * x + y * y);
     }
 
-    isInSink(character, sink) {
+    isInSink({ x, y, width }, sink) {
         return (
-            (character.x + character.width) >= sink.x &&
-            character.x <= (sink.x + sink.width) &&
-            character.y >= sink.y &&
-            character.y <= (sink.y + sink.height)
+            (x + width) >= sink.x &&
+            x <= (sink.x + sink.width) &&
+            y >= sink.y &&
+            y <= (sink.y + sink.height)
         );
     }
 
@@ -57,33 +57,33 @@ export default class Wander {
             return 1;
         }
 
-        var leftXSlope = (
+        const leftXSlope = (
             (walkSurface[box.bottomLeft].x - walkSurface[box.topLeft].x) /
             (walkSurface[box.bottomLeft].y - walkSurface[box.topLeft].y)
         );
-        var leftZSlope = (
+        const leftZSlope = (
             (walkSurface[box.bottomLeft].zoom - walkSurface[box.topLeft].zoom) /
             (walkSurface[box.bottomLeft].y - walkSurface[box.topLeft].y)
         );
-        var midLeft = {
+        const midLeft = {
             x: walkSurface[box.topLeft].x + leftXSlope * (y - walkSurface[box.topLeft].y),
             z: walkSurface[box.topLeft].zoom + leftZSlope * (y - walkSurface[box.topLeft].y),
         };
 
-        var rightXSlope = (
+        const rightXSlope = (
             (walkSurface[box.bottomRight].x - walkSurface[box.topRight].x) /
             (walkSurface[box.bottomRight].y - walkSurface[box.topRight].y)
         );
-        var rightZSlope = (
+        const rightZSlope = (
             (walkSurface[box.bottomRight].zoom - walkSurface[box.topRight].zoom) /
             (walkSurface[box.bottomRight].y - walkSurface[box.topRight].y)
         );
-        var midRight = {
+        const midRight = {
             x: walkSurface[box.topRight].x + rightXSlope * (y - walkSurface[box.topRight].y),
             z: walkSurface[box.topRight].zoom + rightZSlope * (y - walkSurface[box.topRight].y),
         };
 
-        var midSlope = (midRight.z - midLeft.z) / (midRight.x - midLeft.x);
+        const midSlope = (midRight.z - midLeft.z) / (midRight.x - midLeft.x);
 
         return midLeft.z + midSlope * midLeft.x;
         // return ((y - 150) / 4 + 150) / 150;
@@ -160,14 +160,17 @@ export default class Wander {
     }
 
     _getCurrentSink(me) {
-        Object.entries(this.sinks)
-            .forEach(([sinkName, sink]) => {
-                const nextCoords = {
-                    x: me.x + me.dx,
-                    y: me.y + me.dy,
-                    width: me.width,
-                    height: me.height,
-                };
+        if (!this.sinks) {
+            return;
+        }
+        const nextCoords = {
+            x: me.x + me.dx,
+            y: me.y + me.dy,
+            width: me.width,
+            height: me.height,
+        };
+        const entries = Object.entries(this.sinks);
+        const index = entries.findIndex(([sinkName, sink]) => {
                 if(
                     !this.isInSink(me, sink) &&
                     this.isInSink(nextCoords, sink)
@@ -175,13 +178,16 @@ export default class Wander {
                     return sinkName;
                 }
             });
+        if (index !== -1) {
+            return entries[index][0];
+        }
     }
 
     _updateSpeed(character) {
         let unit = 2;
         character.dx = 0;
         character.dy = 0;
-        if(this.host.keys.shift) {
+        if(!this.host.keys.shift) {
             unit *= 2;
         }
         if(this.host.keys[37] || this.host.keys['Q'.charCodeAt()] || this.host.keys['A'.charCodeAt()]) {

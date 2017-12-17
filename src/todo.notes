@@ -1,0 +1,5 @@
+fix sink
+fix dialog centering
+fix utf8
+load data at runtime
+text style is not set right from the beginning
