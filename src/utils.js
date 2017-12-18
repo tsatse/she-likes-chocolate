@@ -6,64 +6,65 @@ export function clone(obj) {
         return obj;
     }
 
-    var copy;
     // Handle Date
     if(obj instanceof Date) {
-        copy = new Date();
-        copy.setTime(obj.getTime());
-        return copy;
+        return new Date(obj);
     }
     // Handle Array
     if(obj instanceof Array) {
-        copy = [];
-        for(var i = 0, len = obj.length; i < len; ++i) {
-            copy[i] = clone(obj[i]);
-        }
-        return copy;
+        return obj.map(element => clone(element));
     }
 
     // Handle Object
     if(obj instanceof Object) {
-        copy = {};
-        for(var attr in obj) {
-            if(obj.hasOwnProperty(attr)) {
-                copy[attr] = clone(obj[attr]);
-            }
-        }
-        return copy;
+        return Object.entries(obj)
+            .reduce((result, [key, value]) => {
+                result[key] = clone(value);
+                return result;
+            }, {});
     }
 
     throw new Error('Unable to copy obj! Its type is not supported.');
 }
 
-export function loadImages(imagesURLs, allDone) {
-    var imagesNames = Object.keys(imagesURLs);
-    var result = {};
-    var loaded = 0;
-    var loadCallback = function() {
-        loaded += 1;
-        if(loaded === imagesNames.length) {
-            allDone(result);
-        }
-    };
-    for(var i = 0; i < imagesNames.length; i++) {
-        var imageName = imagesNames[i];
-        var url = imagesURLs[imageName];
-        if(url !== null) {
-            var img = new global.Image();
-            result[imageName] = img;
-            img.onload = loadCallback;
-            img.src = url;
-        }
-        else {
+export function loadImages(imagesURLs) {
+    return new Promise((resolve, reject) => {
+        const imagesNames = Object.keys(imagesURLs);
+        const images = {};
+        let loaded = 0;
+
+        const loadCallback = () => {
             loaded += 1;
-            result[imageName] = null;
-        }
-    }
+            if(loaded === imagesNames.length) {
+                resolve(images);
+            }
+        };
+        const errorCallback = () => {
+            loaded += 1;
+            if(loaded === imageNames.length) {
+                resolve(images);
+            }
+        };
+
+        imagesNames.forEach(imageName => {
+            const url = imagesURLs[imageName];
+            if(url !== null) {
+                const img = new global.Image();
+                images[imageName] = img;
+                img.onload = loadCallback;
+                img.onerror = errorCallback;
+                img.src = url;
+            }
+            else {
+                loaded += 1;
+                images[imageName] = null;
+            }
+        });
+    });
 }
 
 export function getMethodSignature(object, methodString) {
-    var result = methodString.substr(9, methodString.indexOf(')') + 1 - 9);
+    let result = methodString.substr(9, methodString.indexOf(')') + 1 - 9);
     if(object) {
         result = object.toString() + '.' + result;
     }
@@ -71,7 +72,7 @@ export function getMethodSignature(object, methodString) {
 }
 
 export function updateCtxWithImages(images, destination) {
-    var names = Object.keys(images);
+    const names = Object.keys(images);
     for(var i = 0; i < names.length; i++) {
         var name = names[i];
         if(images[name] !== null) {

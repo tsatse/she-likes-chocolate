@@ -117,7 +117,7 @@ export default {
                     "x": 203,
                     "y": 300,
                     "dialogColor": "cyan"
-                }
+                },
             },
             "sinks": {
                 "getAtJoes": {
@@ -152,7 +152,7 @@ export default {
                     "width": 90,
                     "height": 150,
                     "x": 203,
-                    "y": 185
+                    "y": 350
                 },
                 "joe": {
                     "sprites": "meDay",
@@ -160,8 +160,32 @@ export default {
                     "height": 150,
                     "x": 203,
                     "y": 85,
+                    "dialogColor": "green",
                     "behaviour": [{
                         "type": "shopKeeper"
+                    }, {
+                        "type": "walker",
+                        "wayPoints": [{
+                            x: 200,
+                            y: 300,
+                        }, {
+                            x: 400,
+                            y: 300,
+                        }, {
+                            x: 600,
+                            y: 250,
+                        }]
+                    }, {
+                        "type": "linearTalker",
+                        "dialogs": [
+                            [{
+                                "who": "me",
+                                "text": "hello"
+                            }, {
+                                "who": "joe",
+                                "text": "hello, son"
+                            }]
+                        ]
                     }]
                 }
             },
@@ -248,7 +272,15 @@ export default {
                 ]
             },
             "renderHeight": 450,
-            "mapWidth": 2400
+            "mapWidth": 2400,
+            "sinks": {
+                "getAtJoes": {
+                    "x": 395,
+                    "y": 216,
+                    "width": 120,
+                    "height": 50
+                }
+            }
         },
 
         "fin": {
@@ -264,7 +296,7 @@ export default {
         "title": {"keyPressed": "intro"},
         "intro": {"getAtJoes": "atJoes"},
         "atJoes": {"exit": "outFromJoes"},
-        "outFromJoes": {},
+        "outFromJoes": {"getAtJoes": "atJoes"},
         "fin": {"keyPressed": "atJoes"}
     },
     "sprites": {

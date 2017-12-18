@@ -112,13 +112,9 @@ class Game {
     }
 
     loadImages(images) {
-        return new Promise(function(resolve, reject) {
-            if(images) {
-                loadImages(images, function(imgs) {
-                    resolve(imgs);
-                });
-            }
-        });
+        if(images) {
+            return loadImages(images);
+        }
     }
 
     getHierarchy(phaseName, children) {

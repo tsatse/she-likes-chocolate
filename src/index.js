@@ -1,5 +1,5 @@
 ﻿import { merge } from './utils';
-import GameEngine from './game';
+import Game from './game';
 import gameDefinition from './definition';
 
 import override from './override-for-debug';
@@ -7,7 +7,7 @@ import override from './override-for-debug';
 
 const definition = { ...gameDefinition, ...override };
 
-(new GameEngine(
+(new Game(
     document.getElementById('game-canvas'),
     definition    
 )).start();

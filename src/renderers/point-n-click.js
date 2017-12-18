@@ -58,16 +58,16 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
         }
     });
     if(dispayActionHint && host.debug) {
-        drawActionHint(host.ctx, host.characters.me, renderCoords);
+        drawActionHint(host.ctx, host.characters.me, renderCoords, currentMapOffset);
     }
 }
 
-function drawActionHint(ctx, me, renderCoords) {
+function drawActionHint(ctx, me, renderCoords, mapOffset) {
     ctx.fillStyle = 'black';
     ctx.globalAlpha = 0.5;
     ctx.fillRect(
-        me.x + me.width / 2 - 25,
-        me.y - me.height + 25 + renderCoords.y,
+        me.x + me.width / 2 - 25 + renderCoords.x - mapOffset.x,
+        me.y - me.height + 25 + renderCoords.y - mapOffset.y,
         50, 50);
     ctx.globalAlpha = 1;
 }
@@ -101,6 +101,7 @@ function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phas
 
     const scale = phase.getZ(character.x, character.y, phase.walkSurface);
 
+    ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
     ctx.font = 'normal 14pt helvetica';
     const metrics = ctx.measureText(currentLine.text);
@@ -138,18 +139,33 @@ function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phas
 }
 
 function drawText(ctx, text, x, y, color) {
-    ctx.fillStyle = 'rgb(255, 255, 255)';
+    ctx.fillStyle = color || 'rgb(255, 255, 255)';
     ctx.fillText(text, x + 1, y + 1);
-    ctx.fillStyle = 'rgb(255, 255, 255)';
     ctx.fillText(text, x - 1, y - 1);
-    ctx.fillStyle = color || 'black';
+    ctx.fillStyle = 'black';
     ctx.fillText(text, x, y);
 }
+
+function drawCoords(ctx, { x, y }, renderCoords, mapOffset, color) {
+    ctx.textAlign = 'center';
+    drawText(
+        ctx,
+        `[${Math.round(x)}, ${Math.round(y)}]`,
+        renderCoords.x + x - mapOffset.x,
+        renderCoords.y + y - mapOffset.y,
+        color
+    );
+    ctx.textAlign = 'left';
+}
+
 
 function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
     let x;
     let y;
     const walkSurface = phase.walkSurface;
+    
+    ctx.textBaseline = 'middle';
+    ctx.font = 'normal 10pt helvetica';
 
     if (phase.sinks) {
         Object.entries(phase.sinks)
@@ -158,15 +174,16 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
                 x = sink.x + renderCoords.x - mapOffset.x;
                 y = sink.y + renderCoords.y - mapOffset.y;
                 const sinkText = `[${sink.x} ${sink.y}]`;
-                ctx.textAlign = 'center';
                 ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
                 ctx.fillRect(x, y, sink.width, sink.height);
-                drawText(ctx, `[${sink.x} ${sink.y}]`, x, y, 'rgb(128,0,0)');
-                drawText(
-                    ctx,
-                    `[${sink.x + sink.width} ${sink.y + sink.height}]`,
-                    x + sink.width,
-                    y + sink.height,
+                drawCoords(ctx, sink, renderCoords, mapOffset, 'rgb(255,0,0)');
+                drawCoords(
+                    ctx, {
+                        x: sink.x + sink.width,
+                        y: sink.y + sink.height,
+                    },
+                    renderCoords,
+                    mapOffset,
                     'rgb(128,0,0)'
                 );
                 ctx.textAlign = 'left';
@@ -182,23 +199,7 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
                 renderCoords.y + character.y - mapOffset.y - character.height * scale,
                 character.width, character.height * scale
                 );
-            ctx.fillStyle = 'black';
-            ctx.textAlign = 'center';
-            drawText(
-                ctx,
-                `[${character.x}, ${character.y}]`,
-                character.x + renderCoords.x - mapOffset.x,
-                character.y + renderCoords.y - mapOffset.y - character.height * scale,
-                'rgb(0,128,0)'
-            );
-            drawText(
-                ctx,
-                `[${character.x + character.width}, ${character.y + character.height}]`,
-                character.x + character.width + renderCoords.x - mapOffset.x,
-                character.y + renderCoords.y - mapOffset.y * scale + 16,
-                'rgb(0,128,0)'
-            );
-            ctx.textAlign = 'left';
+            drawCoords(ctx, character, renderCoords, mapOffset, 'rgb(0, 128, 0)')
         });
     ctx.beginPath();
     ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
@@ -215,6 +216,17 @@ function drawDebug(ctx, phase, renderCoords, characters, mapOffset) {
                 );
         });
         ctx.fill();
+        walkSurface.forEach(
+            point =>
+                drawCoords(
+                    ctx,
+                    point,
+                    renderCoords,
+                    mapOffset,
+                    'rgb(128, 128, 0)'
+                )
+        );
+        
     }
 }
 
