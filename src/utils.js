@@ -27,41 +27,33 @@ export function clone(obj) {
     throw new Error('Unable to copy obj! Its type is not supported.');
 }
 
-export function loadImages(imagesURLs) {
+export function loadImage(url) {
     return new Promise((resolve, reject) => {
-        const imagesNames = Object.keys(imagesURLs);
-        const images = {};
-        let loaded = 0;
-
-        const loadCallback = () => {
-            loaded += 1;
-            if(loaded === imagesNames.length) {
-                resolve(images);
-            }
-        };
-        const errorCallback = () => {
-            loaded += 1;
-            if(loaded === imageNames.length) {
-                resolve(images);
-            }
-        };
-
-        imagesNames.forEach(imageName => {
-            const url = imagesURLs[imageName];
-            if(url !== null) {
-                const img = new global.Image();
-                images[imageName] = img;
-                img.onload = loadCallback;
-                img.onerror = errorCallback;
-                img.src = url;
-            }
-            else {
-                loaded += 1;
-                images[imageName] = null;
-            }
-        });
+        const img = new global.Image();
+        img.onload = () => resolve(img);
+        img.onerror = error => reject(error);
+        img.src = url;
     });
 }
+
+export function loadImages(imageURLs) {
+    return Promise.all(
+        Object.entries(imageURLs)
+            .map(
+                ([name, url]) =>
+                    loadImage(url)
+                        .then(img => ({ name, img }))
+                        .catch(img => ({ name, img }))
+            )
+    )
+        .then(images => {
+            return images.reduce(
+                (sofar, { name, img }) =>
+                    ({ ...sofar, [name]: img }),
+                {});
+        });
+}
+
 
 export function getMethodSignature(object, methodString) {
     let result = methodString.substr(9, methodString.indexOf(')') + 1 - 9);
