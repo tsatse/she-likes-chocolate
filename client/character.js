@@ -1,12 +1,14 @@
 import walker from './behaviours/walker';
 import shopKeeper from './behaviours/shop-keeper';
 import linearTalker from './behaviours/linear-talker';
+import still from './behaviours/still';
 
 
 const behaviours = {
     walker,
     shopKeeper,
     linearTalker,
+    still,
 };
 
 class Character {

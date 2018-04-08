@@ -1,6 +1,6 @@
 import {
     loadImages,
-    deepMerge,
+    mergeDeep,
 } from './utils';
 import keys from './keys';
 import Character from './character';
@@ -11,6 +11,8 @@ import DefaultInteration from './interactions/default';
 
 import PointNClick from './renderers/point-n-click';
 import title from './renderers/title';
+import qs from 'qs';
+
 
 const interactions = {
     Dialogue,
@@ -26,16 +28,15 @@ const renderers = {
 };
 
 class Game {
-    constructor(canvas, gameStructure) {
-        this.phaseName = null;
+    constructor(canvas, ) {
+        this.phaseName = 'title';
         this.characters = {};
-        this.gameStructure = gameStructure;
+        this.gameStructure = {};
         this.phaseInstances = {};
         this.registeredEventHandlers = {};
         this.lastUpdate = null;
         this.renderer = null;
         this.images = {};
-        this.debug = this.gameStructure.debug;
         this.keys = keys;
         this.gameCanvas = canvas;
         this.gameCanvas.width = window.innerWidth;
@@ -72,12 +73,26 @@ class Game {
     }
 
     start() {
-        return this.gotoPhase(this.gameStructure.entry)
+        return this.loadGameData('boot')
+            .then(() => this.gotoPhase(this.gameStructure.entry))
             .then(function() {
                 requestAnimationFrame(this.loop.bind(this));
             }.bind(this))
             .catch(function(error) {
                 console.error(error);
+            });
+    }
+
+    getLocation() {
+        return this.phaseName;
+    }
+
+    loadGameData(location) {
+        return fetch(`/game?${qs.stringify({location})}`)
+            .then(response => response.json())
+            .then(gameData => {
+                this.gameStructure = mergeDeep(this.gameStructure, gameData);
+                this.debug = this.gameStructure.debug;
             });
     }
 
@@ -111,12 +126,6 @@ class Game {
         }
     }
 
-    loadImages(images) {
-        if(images) {
-            return loadImages(images);
-        }
-    }
-
     getHierarchy(phaseName, children) {
         if(!children) {
             children = [];
@@ -140,7 +149,7 @@ class Game {
                     !(currentDescription.noInherit && currentDescription.noInherit[propertyName]) &&
                     typeof(currentDescription[propertyName]) !== 'string'
                 ) {
-                    phaseSoFar[propertyName] = deepMerge(phaseSoFar[propertyName], currentDescription[propertyName]);
+                    phaseSoFar[propertyName] = mergeDeep(phaseSoFar[propertyName], currentDescription[propertyName]);
                 }
                 else {
                     phaseSoFar[propertyName] = currentDescription[propertyName];
@@ -170,7 +179,9 @@ class Game {
 
         for(const characterName in phase.characters) {
             for(var stateName in this.gameStructure.sprites[phase.characters[characterName].sprites]) {
-                imageName = this.gameStructure.sprites[phase.characters[characterName].sprites][stateName];
+                const { image: imageName } = this.gameStructure.animations[this.gameStructure.sprites[
+                    phase.characters[characterName].sprites
+                ][stateName]];
                 if(!this.images[imageName]) {
                     imagesToLoad[imageName] = this.gameStructure.paths[imageName];
                 }
@@ -219,7 +230,7 @@ class Game {
                 phaseDescription = this.getPhaseData(phaseName);
                 var imagesToLoad = this.filterImagesToLoad(phaseDescription);
                 if(Object.keys(imagesToLoad).length) {
-                    return this.loadImages(imagesToLoad);
+                    return loadImages(imagesToLoad);
                 }
             }.bind(this))
             .then(function(images) {
@@ -265,6 +276,9 @@ class Game {
                 this.renderer = renderers[this.phaseInstances[this.phaseName].rendering.type];
                 this.changingPhase = false;
             }.bind(this))
+            .then(() => {
+                return this.loadGameData(this.getLocation());                
+            })
             .catch(function(error) {
                 console.error(error);
             });

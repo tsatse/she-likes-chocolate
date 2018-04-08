@@ -4,10 +4,10 @@ import packageJSON from './package.json';
 export default {
   context: __dirname,
   entry: [
-    './src/index.js',
+    './client/index.js',
   ],
   output: {
-    filename: 'dist/index.js',
+    filename: 'dist/client/index.js',
   },
   module: {
     rules: [

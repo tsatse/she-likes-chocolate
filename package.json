@@ -4,8 +4,11 @@
   "description": "An adventure game",
   "main": "src/index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "yarn build-server && yarn build-client",
+    "build-server": "babel server -d dist/server",
+    "build-client": "webpack",
     "start": "webpack-dev-server",
+    "serv": "node dist/server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,12 +27,15 @@
   },
   "homepage": "https://github.com/tsatse/she-likes-chocolate#readme",
   "dependencies": {
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "express": "^4.16.2",
+    "gs": "^0.0.2",
     "shelljs": "^0.5.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "eslint": "^4.13.0",
     "eslint-config-airbnb": "^16.1.0",

@@ -42,9 +42,10 @@ function drawCharacters(host, currentMapOffset, renderCoords) {
                 host.ctx,
                 character,
                 currentMapOffset,
+                host.gameStructure.animations,
                 host.images,
                 renderCoords,
-                host.gameStructure.sprites[character.sprites],
+                host.gameStructure.sprites,
                 host.getCurrentPhase(),
                 host.characters
             );
@@ -72,8 +73,14 @@ function drawActionHint(ctx, me, renderCoords, mapOffset) {
     ctx.globalAlpha = 1;
 }
 
-function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites, phase, characters) {
-    const image = images[sprites[character.action]];
+function drawCharacter(ctx, character, mapOffset, animations, images, renderCoords, sprites, phase, characters) {
+    const {
+        image: imageName,
+        width,
+        height,
+    } = animations[sprites[character.sprites][character.action]];
+
+    const image = images[imageName];
     const xOffsetInSource = character.phase * character.width;
 
     const scale = phase.getZ && phase.getZ(character.x, character.y, phase.walkSurface);
@@ -81,23 +88,38 @@ function drawCharacter(ctx, character, mapOffset, images, renderCoords, sprites,
         image,
         xOffsetInSource,
         0,
-        character.width,
-        character.height,
-        character.x - mapOffset.x + renderCoords.x - (character.width * scale - character.width) / 2,
-        character.y - mapOffset.y + renderCoords.y - character.height * scale,
-        character.width * scale,
-        character.height * scale
+        width,
+        height,
+        character.x - mapOffset.x + renderCoords.x - (width * scale - width) / 2,
+        character.y - mapOffset.y + renderCoords.y - height * scale,
+        width * scale,
+        height * scale
     );
     if(character.talkActivation) {
         character.talkActivation -= 1;
-        drawDialogue(ctx, character.currentLine, renderCoords, characters[character.currentLine.who], mapOffset, phase);
+        drawDialogue(
+            ctx,
+            character.currentLine,
+            renderCoords,
+            characters[character.currentLine.who],
+            animations,
+            sprites,
+            mapOffset,
+            phase
+        );
     }
 }
 
-function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phase) {
+function drawDialogue(ctx, currentLine, renderCoords, character, animations, sprites, mapOffset, phase) {
     if(currentLine === null) {
         return;
     }
+
+    const {
+        image: imageName,
+        width,
+        height,
+    } = animations[sprites[character.sprites][character.action]];
 
     const scale = phase.getZ(character.x, character.y, phase.walkSurface);
 
@@ -106,8 +128,8 @@ function drawDialogue(ctx, currentLine, renderCoords, character, mapOffset, phas
     ctx.font = 'normal 14pt helvetica';
     const metrics = ctx.measureText(currentLine.text);
     const position = {};
-    position.x = character.x - mapOffset.x - metrics.width / 2 + character.width / 2;
-    position.y = character.y - mapOffset.y - 40 - character.height * scale;
+    position.x = character.x - mapOffset.x - metrics.width / 2 + width / 2;
+    position.y = character.y - mapOffset.y - 40 - height * scale;
 
     ctx.fillStyle = 'white';
     if(character.dialogColor) {
@@ -252,7 +274,7 @@ function isVisible(character, currentMapOffset) {
     return false;
 }
 
-function updateFrames(time, images, characters, sprites) {
+function updateFrames(time, images, characters, sprites, animations) {
     if (!lastFrameUpdate) {
         lastFrameUpdate = time;
     }
@@ -261,7 +283,14 @@ function updateFrames(time, images, characters, sprites) {
     }
     Object.values(characters)
         .forEach(character => {
-            character.phase = (character.phase + 1) % (images[sprites[character.sprites][character.action]].width / character.width);
+            const {
+                image: imageName,
+                width, height,
+            } = animations[sprites[character.sprites][character.action]];
+            character.phase = (character.phase + 1) %
+                (
+                    images[imageName].width / width
+                );
         });
     lastFrameUpdate = time;
 }
@@ -272,7 +301,13 @@ function resetSettings(ctx) {
 
 export default function render(time, host) {
     resetSettings(host.ctx);
-    updateFrames(time, host.images, host.characters, host.gameStructure.sprites);
+    updateFrames(
+        time,
+        host.images,
+        host.characters,
+        host.gameStructure.sprites,
+        host.gameStructure.animations
+    );
     if ((time - host.lastDraw) < 40) {
         return;
     }
